@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>音樂網站</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 首頁 -->
+  <div id="home" class="fullscreen" onclick="enterSite()">
+    <picture>
+      <source media="(max-width: 600px)" srcset="home.png" />
+      <source media="(max-width: 1024px)" srcset="home ipad.png" />
+      <img src="home mac.jpg" alt="進入網站" class="cover-image" />
+    </picture>
+  </div>
+
+  <!-- 四格選單（iPad 與桌機） -->
+  <div id="menu" class="hidden">
+    <img src="menu.png" usemap="#songmap" class="menu-image" width="1200" height="800" alt="選單" />
+    <map name="songmap">
+      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" alt="左上" />
+      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" alt="右上" />
+      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" alt="左下" />
+      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" alt="右下" />
+    </map>
+  </div>
+
+  <!-- 手機四格選單（長圖） -->
+  <div id="menu-mobile" class="hidden">
+    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" width="1080" height="2600" alt="手機選單" />
+    <map name="songmap-mobile">
+      <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
+      <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
+      <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
+      <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
+    </map>
+  </div>
+
+  <!-- 歌曲頁面 -->
+  <div id="main" class="hidden">
+    <div class="song-slider" id="slider">
+      <div class="song" id="song1">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="event.stopPropagation();"></div> <!-- 左側不動 -->
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls src="WhispersofErosion.mp3"></audio>
+      </div>
+      <div class="song" id="song2">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls src="Metamorphosis.mp3"></audio>
+      </div>
+      <div class="song" id="song3">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls src="Echoes.mp3"></audio>
+      </div>
+      <div class="song" id="song4">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls src="Sea Frequency.mp3"></audio>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSong = 1;
+
+    function isTabletOrDesktop() {
+      return window.innerWidth > 600;
+    }
+
+    function enterSite() {
+      document.getElementById('home').style.display = 'none';
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
+    }
+
+    function openSong(n) {
+      currentSong = n;
+      document.getElementById('menu').style.display = 'none'; // 隱藏選單
+      document.getElementById('menu-mobile').style.display = 'none'; // 隱藏手機選單
+      document.getElementById('main').classList.remove('hidden'); // 顯示歌曲頁面
+      const slider = document.getElementById('slider');
+      slider.scrollTo({
+        left: (n - 1) * slider.clientWidth,
+        behavior: 'auto'
+      });
+    }
+
+    function prevSong() {
+      if (currentSong === 1) {
+        if (isTabletOrDesktop()) {
+          document.getElementById('main').classList.add('hidden');
+          document.getElementById('menu').classList.remove('hidden');
+        } else {
+          back(); // 手機回首頁
+        }
+        return;
+      }
+      currentSong--;
+      scrollToSong();
+    }
+
+    function nextSong() {
+      if (currentSong === 4) return;
+      currentSong++;
+      scrollToSong();
+    }
+
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({
+        left: (currentSong - 1) * slider.clientWidth,
+        behavior: 'smooth'
+      });
+    }
+
+    function back() {
+      location.reload(); // 回首頁
+    }
+
+    // 同步 currentSong 當使用者用手勢滑動時
+    document.getElementById('slider').addEventListener('scroll', function () {
+      const index = Math.round(this.scrollLeft / this.clientWidth);
+      currentSong = index + 1;
+    });
+  </script>
+</body>
+</html>
