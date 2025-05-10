@@ -169,6 +169,6 @@
 
 @media (max-width: 600px) {
   .song audio {
-    bottom: 20px; /* 你也可以試試 10px 或 0px */
+    bottom: 50px; /* 你也可以試試 10px 或 0px */
   }
 }
