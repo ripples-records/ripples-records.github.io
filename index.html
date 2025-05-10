@@ -70,70 +70,86 @@
   </div>
 
   <script>
-    let currentSong = 1;
+  let currentSong = 1;
 
-    function isTabletOrDesktop() {
-      return window.innerWidth > 600;
+  function isTabletOrDesktop() {
+    return window.innerWidth > 600;
+  }
+
+  function pauseAllAudio() {
+    const audios = document.querySelectorAll('audio');
+    audios.forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+  }
+
+  function enterSite() {
+    document.getElementById('home').style.display = 'none';
+    if (isTabletOrDesktop()) {
+      document.getElementById('menu').classList.remove('hidden');
+    } else {
+      document.getElementById('menu-mobile').classList.remove('hidden');
     }
+  }
 
-    function enterSite() {
-      document.getElementById('home').style.display = 'none';
+  function openSong(n) {
+    pauseAllAudio();
+    currentSong = n;
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('menu-mobile').style.display = 'none';
+    document.getElementById('main').classList.remove('hidden');
+    const slider = document.getElementById('slider');
+    slider.scrollTo({
+      left: (n - 1) * slider.clientWidth,
+      behavior: 'auto'
+    });
+  }
+
+  function prevSong() {
+    if (currentSong === 1) {
+      pauseAllAudio();
       if (isTabletOrDesktop()) {
+        document.getElementById('main').classList.add('hidden');
         document.getElementById('menu').classList.remove('hidden');
       } else {
-        document.getElementById('menu-mobile').classList.remove('hidden');
+        back();
       }
+      return;
     }
+    pauseAllAudio();
+    currentSong--;
+    scrollToSong();
+  }
 
-    function openSong(n) {
-      currentSong = n;
-      document.getElementById('menu').style.display = 'none'; // 隱藏選單
-      document.getElementById('menu-mobile').style.display = 'none'; // 隱藏手機選單
-      document.getElementById('main').classList.remove('hidden'); // 顯示歌曲頁面
-      const slider = document.getElementById('slider');
-      slider.scrollTo({
-        left: (n - 1) * slider.clientWidth,
-        behavior: 'auto'
-      });
-    }
+  function nextSong() {
+    if (currentSong === 4) return;
+    pauseAllAudio();
+    currentSong++;
+    scrollToSong();
+  }
 
-    function prevSong() {
-      if (currentSong === 1) {
-        if (isTabletOrDesktop()) {
-          document.getElementById('main').classList.add('hidden');
-          document.getElementById('menu').classList.remove('hidden');
-        } else {
-          back(); // 手機回首頁
-        }
-        return;
-      }
-      currentSong--;
-      scrollToSong();
-    }
-
-    function nextSong() {
-      if (currentSong === 4) return;
-      currentSong++;
-      scrollToSong();
-    }
-
-    function scrollToSong() {
-      const slider = document.getElementById('slider');
-      slider.scrollTo({
-        left: (currentSong - 1) * slider.clientWidth,
-        behavior: 'smooth'
-      });
-    }
-
-    function back() {
-      location.reload(); // 回首頁
-    }
-
-    // 同步 currentSong 當使用者用手勢滑動時
-    document.getElementById('slider').addEventListener('scroll', function () {
-      const index = Math.round(this.scrollLeft / this.clientWidth);
-      currentSong = index + 1;
+  function scrollToSong() {
+    const slider = document.getElementById('slider');
+    slider.scrollTo({
+      left: (currentSong - 1) * slider.clientWidth,
+      behavior: 'smooth'
     });
-  </script>
+  }
+
+  function back() {
+    pauseAllAudio();
+    location.reload(); // 回首頁
+  }
+
+  // 註解掉這段避免衝突
+  /*
+  document.getElementById('slider').addEventListener('scroll', function () {
+    const index = Math.round(this.scrollLeft / this.clientWidth);
+    currentSong = index + 1;
+  });
+  */
+</script>
+
 </body>
 </html>
