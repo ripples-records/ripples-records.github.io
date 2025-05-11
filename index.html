@@ -149,6 +149,18 @@
     currentSong = index + 1;
   });
   */
+
+let previousSongIndex = 1;
+
+document.getElementById('slider').addEventListener('scroll', function () {
+  const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
+
+  if (index !== previousSongIndex) {
+    pauseAllAudio(); // 停止上一首
+    currentSong = index;
+    previousSongIndex = index;
+  }
+});
 </script>
 
 </body>
