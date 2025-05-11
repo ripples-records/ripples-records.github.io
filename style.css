@@ -174,8 +174,10 @@
 }
 
 
- @media (max-width: 1024px) and (min-width: 601px) {
+@media (max-width: 1024px) and (min-width: 601px) {
   .song audio {
-    bottom: 50px; /* 你也可以試試 10px 或 0px */
+    bottom: 80px; /* 往上調高避免被遮住 */
+    transform: translateX(-50%) translateY(-10px); /* 微調位置更穩定 */
   }
 }
+
