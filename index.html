@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
   <link rel="stylesheet" href="style.css" />
-
-
 </head>
 <body>
 
@@ -70,8 +68,6 @@
       </div>
     </div>
   </div>
-
-
 
   <script>
   let currentSong = 1;
@@ -141,24 +137,10 @@
     });
   }
 
-function back() {
-  pauseAllAudio();
-  document.getElementById('main').classList.add('hidden');
-
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-
-  if (isTabletOrDesktop()) {
-    if (isLandscape) {
-      document.getElementById('menu').classList.remove('hidden');
-      document.getElementById('rotate-warning').style.display = 'none';
-    } else {
-      document.getElementById('rotate-warning').style.display = 'flex';
-    }
-  } else {
-    document.getElementById('menu-mobile').classList.remove('hidden');
-    document.getElementById('rotate-warning').style.display = 'none';
+  function back() {
+    pauseAllAudio();
+    location.reload(); // 回首頁
   }
-}
 
   // 註解掉這段避免衝突
   /*
@@ -179,44 +161,10 @@ document.getElementById('slider').addEventListener('scroll', function () {
     previousSongIndex = index;
   }
 });
-
-// 直的轉橫式
- function checkOrientation() {
-    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-    const rotateWarning = document.getElementById("rotate-warning");
-    const menu = document.getElementById("menu");
-    const main = document.getElementById("main");
-
-    if (isPortrait && window.innerWidth > 600) {
-      rotateWarning.style.display = "flex";
-      menu.style.display = "none";
-      main.style.display = "none";
-    } else {
-      rotateWarning.style.display = "none";
-
-      // 根據目前進度顯示 menu 或 main
-      if (document.getElementById('main').classList.contains('hidden')) {
-        menu.classList.remove("hidden");
-      } else {
-        main.classList.remove("hidden");
-      }
-    }
-  }
-
-  window.addEventListener("orientationchange", () => {
-    setTimeout(checkOrientation, 300); // 給 iPad 一點時間判斷
-  });
-
-  window.addEventListener("load", checkOrientation);
-  window.addEventListener("resize", checkOrientation);
-
-
 </script>
 
-<div id="rotate-warning" class="hidden">
-  <p>請將裝置橫向使用以觀看完整內容</p>
-</div>
-
+</body>
+</html>
 
 
   
