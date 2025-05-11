@@ -71,6 +71,8 @@
     </div>
   </div>
 
+
+
   <script>
   let currentSong = 1;
 
@@ -163,11 +165,45 @@ document.getElementById('slider').addEventListener('scroll', function () {
     previousSongIndex = index;
   }
 });
+
+// 直的轉橫式
+ function checkOrientation() {
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    const rotateWarning = document.getElementById("rotate-warning");
+    const menu = document.getElementById("menu");
+    const main = document.getElementById("main");
+
+    if (isPortrait && window.innerWidth > 600) {
+      rotateWarning.style.display = "flex";
+      menu.style.display = "none";
+      main.style.display = "none";
+    } else {
+      rotateWarning.style.display = "none";
+
+      // 根據目前進度顯示 menu 或 main
+      if (document.getElementById('main').classList.contains('hidden')) {
+        menu.classList.remove("hidden");
+      } else {
+        main.classList.remove("hidden");
+      }
+    }
+  }
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(checkOrientation, 300); // 給 iPad 一點時間判斷
+  });
+
+  window.addEventListener("load", checkOrientation);
+  window.addEventListener("resize", checkOrientation);
+
+
 </script>
 
 <div id="rotate-warning" class="hidden">
   <p>請將裝置橫向使用以觀看完整內容</p>
 </div>
+
+
 
   
 </body>
