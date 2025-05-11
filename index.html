@@ -141,10 +141,23 @@
     });
   }
 
-  function back() {
-    pauseAllAudio();
-    location.reload(); // 回首頁
+function back() {
+  pauseAllAudio();
+  document.getElementById('main').classList.add('hidden');
+
+  if (isTabletOrDesktop()) {
+    // 如果橫向顯示四格選單（桌機或 iPad）
+    if (window.matchMedia("(orientation: landscape)").matches) {
+      document.getElementById('menu').classList.remove('hidden');
+    } else {
+      // 直向顯示提示
+      document.getElementById('rotate-warning').style.display = 'flex';
+    }
+  } else {
+    // 手機版選單
+    document.getElementById('menu-mobile').classList.remove('hidden');
   }
+}
 
   // 註解掉這段避免衝突
   /*
