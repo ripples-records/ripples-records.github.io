@@ -145,17 +145,18 @@ function back() {
   pauseAllAudio();
   document.getElementById('main').classList.add('hidden');
 
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+
   if (isTabletOrDesktop()) {
-    // 如果橫向顯示四格選單（桌機或 iPad）
-    if (window.matchMedia("(orientation: landscape)").matches) {
+    if (isLandscape) {
       document.getElementById('menu').classList.remove('hidden');
+      document.getElementById('rotate-warning').style.display = 'none';
     } else {
-      // 直向顯示提示
       document.getElementById('rotate-warning').style.display = 'flex';
     }
   } else {
-    // 手機版選單
     document.getElementById('menu-mobile').classList.remove('hidden');
+    document.getElementById('rotate-warning').style.display = 'none';
   }
 }
 
