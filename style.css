@@ -21,7 +21,7 @@ audio {
   .fullscreen {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+     overflow-x: hidden;
   }
   .cover-image {
     width: 100%;
@@ -143,7 +143,7 @@ audio {
 
 #menu-mobile {
   width: 100%;
-  height: auto;
+  min-height: 100vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
