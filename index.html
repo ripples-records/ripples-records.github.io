@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +9,6 @@
 <body>
 
   <!-- 首頁 -->
-
   <div id="home" class="fullscreen" onclick="enterSite()">
     <picture>
       <source media="(max-width: 600px)" srcset="home.png" />
@@ -20,9 +18,8 @@
   </div>
 
   <!-- 四格選單（iPad 與桌機） -->
-
   <div id="menu" class="hidden">
-    <img src="menu.png" usemap="#songmap" class="menu-image" width="1200" height="800" alt="選單" />
+    <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
     <map name="songmap">
       <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" alt="左上" />
       <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" alt="右上" />
@@ -32,9 +29,8 @@
   </div>
 
   <!-- 手機四格選單（長圖） -->
-
   <div id="menu-mobile" class="hidden">
-    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" width="1080" height="2600" alt="手機選單" />
+    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
     <map name="songmap-mobile">
       <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
       <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
@@ -44,12 +40,11 @@
   </div>
 
   <!-- 歌曲頁面 -->
-
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="event.stopPropagation();"></div> <!-- 左側不動 -->
+        <div class="nav-zone left" onclick="event.stopPropagation();"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
         <audio controls src="WhispersofErosion.mp3"></audio>
       </div>
@@ -82,8 +77,7 @@
   }
 
   function pauseAllAudio() {
-    const audios = document.querySelectorAll('audio');
-    audios.forEach(audio => {
+    document.querySelectorAll('audio').forEach(audio => {
       audio.pause();
       audio.currentTime = 0;
     });
@@ -98,49 +92,25 @@
     }
   }
 
-function openSong(n) {
-  pauseAllAudio();
-  currentSong = n;
-
-  document.getElementById('menu').style.display = 'none';
-  document.getElementById('menu-mobile').style.display = 'none';
-  document.getElementById('main').classList.remove('hidden');
-
-  const slider = document.getElementById('slider');
-  slider.scrollTo({
-    left: (n - 1) * slider.clientWidth,
-    behavior: 'auto'
-  });
-
-  // ✅ 為了確保手機可見播放鍵：手動啟用該首歌的 controls
-  const allAudios = document.querySelectorAll('.song audio');
-  allAudios.forEach(audio => {
-    audio.pause(); // 停止所有播放
-    audio.controls = false; // 先關掉所有控制列
-  });
-
-  const targetAudio = document.querySelector(`#song${n} audio`);
-  if (targetAudio) {
-   targetAudio.controls = true;
-targetAudio.load(); // ← 這樣才正確
-
-    // 只開啟當前歌曲的控制列
+  function openSong(n) {
+    pauseAllAudio();
+    currentSong = n;
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('menu-mobile').style.display = 'none';
+    document.getElementById('main').classList.remove('hidden');
+    const slider = document.getElementById('slider');
+    slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
+    const targetAudio = document.querySelector(`#song${n} audio`);
+    if (targetAudio) {
+      targetAudio.controls = true;
+      targetAudio.load();
+    }
+    window.scrollTo(0, document.body.scrollHeight);
   }
-
-  window.scrollTo(0, document.body.scrollHeight);
-
-}
-
 
   function prevSong() {
     if (currentSong === 1) {
-      pauseAllAudio();
-      if (isTabletOrDesktop()) {
-        document.getElementById('main').classList.add('hidden');
-        document.getElementById('menu').classList.remove('hidden');
-      } else {
-        back();
-      }
+      back();
       return;
     }
     pauseAllAudio();
@@ -157,54 +127,20 @@ targetAudio.load(); // ← 這樣才正確
 
   function scrollToSong() {
     const slider = document.getElementById('slider');
-    slider.scrollTo({
-      left: (currentSong - 1) * slider.clientWidth,
-      behavior: 'smooth'
-    });
+    slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
   }
 
   function back() {
     pauseAllAudio();
-    location.reload(); // 回首頁
+    document.getElementById('main').classList.add('hidden');
+    if (isTabletOrDesktop()) {
+      document.getElementById('menu').classList.remove('hidden');
+    } else {
+      document.getElementById('menu-mobile').classList.remove('hidden');
+    }
   }
-
-  // 註解掉這段避免衝突
-  /*
-  document.getElementById('slider').addEventListener('scroll', function () {
-    const index = Math.round(this.scrollLeft / this.clientWidth);
-    currentSong = index + 1;
-  });
-  */
-
-let previousSongIndex = 1;
-
-document.getElementById('slider').addEventListener('scroll', function () {
-  const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
-
-  if (index !== previousSongIndex) {
-    pauseAllAudio(); // 停止上一首
-    currentSong = index;
-    previousSongIndex = index;
-  }
-});
-
-// 用戶首次互動時顯示所有 audio 控制列（某些手機首次進入時會擋住）
-document.addEventListener('click', () => {
-  document.querySelectorAll('audio').forEach(audio => {
-    audio.controls = true;
-  });
-}, { once: true });
-
-
- 
-
-
-</script>
+  </script>
 
 </body>
 </html>
-
-</body>
-</html>
-
 
