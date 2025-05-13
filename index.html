@@ -93,18 +93,33 @@
     }
   }
 
-  function openSong(n) {
-    pauseAllAudio();
-    currentSong = n;
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('menu-mobile').style.display = 'none';
-    document.getElementById('main').classList.remove('hidden');
-    const slider = document.getElementById('slider');
-    slider.scrollTo({
-      left: (n - 1) * slider.clientWidth,
-      behavior: 'auto'
-    });
+function openSong(n) {
+  pauseAllAudio();
+  currentSong = n;
+
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('menu-mobile').style.display = 'none';
+  document.getElementById('main').classList.remove('hidden');
+
+  const slider = document.getElementById('slider');
+  slider.scrollTo({
+    left: (n - 1) * slider.clientWidth,
+    behavior: 'auto'
+  });
+
+  // ✅ 為了確保手機可見播放鍵：手動啟用該首歌的 controls
+  const allAudios = document.querySelectorAll('.song audio');
+  allAudios.forEach(audio => {
+    audio.pause(); // 停止所有播放
+    audio.controls = false; // 先關掉所有控制列
+  });
+
+  const targetAudio = document.querySelector(`#song${n} audio`);
+  if (targetAudio) {
+    targetAudio.controls = true; // 只開啟當前歌曲的控制列
   }
+}
+
 
   function prevSong() {
     if (currentSong === 1) {
@@ -161,6 +176,14 @@ document.getElementById('slider').addEventListener('scroll', function () {
     previousSongIndex = index;
   }
 });
+
+// 用戶首次互動時顯示所有 audio 控制列（某些手機首次進入時會擋住）
+document.addEventListener('click', () => {
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.controls = true;
+  });
+}, { once: true });
+
 </script>
 
 </body>
