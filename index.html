@@ -170,5 +170,16 @@ function openSong(n) {
     }
   </script>
 
+  <script>
+  // 用戶首次互動時強制開啟 audio 控制列（解決 NFC 無播放列問題）
+  document.addEventListener('touchstart', () => {
+    document.querySelectorAll('audio').forEach(audio => {
+      audio.controls = true;
+    });
+  }, { once: true });
+</script>
+
+  
+
 </body>
 </html>
