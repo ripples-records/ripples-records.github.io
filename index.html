@@ -187,6 +187,220 @@ document.addEventListener('click', () => {
   });
 }, { once: true });
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html, body {
+    width: 100%;
+    height: 100%;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .fullscreen {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* 選單頁面 */
+  .menu-image {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+  }
+  
+
+  .song {
+    flex: 0 0 100%;
+    height: 100vh;
+    scroll-snap-align: start;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .song audio {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    z-index: 5; /* 確保蓋在 .nav-zone 上方 */
+    pointer-events: auto; /* 確保能點擊 */
+  }
+
+  /* 桌機播放調高 */
+@media (min-width: 1025px) {
+  .song audio {
+    bottom: 60px;
+  }
+}
+
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 2;
+    border-radius: 5px;
+  }
+
+  .song-slider {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .song {
+    flex: 0 0 100vw;
+    scroll-snap-align: start;
+  }
+  
+  /* 背景圖設定 */
+  #song1 { background-image: url('song1-mac.jpg'); }
+  #song2 { background-image: url('song2-mac.jpg'); }
+  #song3 { background-image: url('song3-mac.jpg'); }
+  #song4 { background-image: url('song4-mac.jpg'); }
+  
+  @media (max-width: 1024px) and (min-width: 601px) {
+    #song1 { background-image: url('song1-ipad.jpg'); }
+    #song2 { background-image: url('song2-ipad.jpg'); }
+    #song3 { background-image: url('song3-ipad.jpg'); }
+    #song4 { background-image: url('song4-ipad.jpg'); }
+  }
+  
+  @media (max-width: 600px) {
+    #song1 { background-image: url('song1.png'); }
+    #song2 { background-image: url('song2.png'); }
+    #song3 { background-image: url('song3.png'); }
+    #song4 { background-image: url('song4.png'); }
+  }
+  
+  .nav-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 4; /* 比 audio 播放器的 z-index 小 */
+  }
+  
+  .nav-zone.left {
+    left: 0;
+  }
+  
+  .nav-zone.right {
+    right: 0;
+  }
+
+
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10; /* 確保在 nav-zone 之上 */
+    background: rgba(48, 51, 57, 0.8);
+    border: none;
+    padding: 10px 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+
+  .hidden {
+    display: none;
+  }
+
+  .menu-mobile-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  #menu-mobile {
+    height: 100vh;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .menu-mobile-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+  }
+  
+  .player-wrapper {
+    position: relative;
+    z-index: 5;
+    pointer-events: auto;
+  }
+
+@media (max-width: 600px) {
+  .song audio {
+    bottom: 50px; /* 你也可以試試 10px 或 0px */
+  }
+}
+
+
+@media (max-width: 1024px) and (min-width: 601px) {
+  .song audio {
+    bottom: 80px; /* 往上調高避免被遮住 */
+    transform: translateX(-50%) translateY(-10px); /* 微調位置更穩定 */
+  }
+}
+
+
+#rotate-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  z-index: 9999;
+  text-align: center;
+  padding: 2rem;
+}
+
+@media screen and (orientation: portrait) and (min-width: 601px) {
+  #rotate-warning {
+    display: flex;
+  }
+
+  #menu,
+  #menu-mobile,
+  #main {
+    display: none !important;
+  }
+}
+
+
 </script>
 
 </body>
