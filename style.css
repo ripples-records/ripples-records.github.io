@@ -213,5 +213,15 @@ audio {
   #main {
     display: none !important;
   }
+
+.menu-image,
+.menu-mobile-image {
+  display: block;
+  width: 100%;
+  height: auto;
 }
+
+}
+
+
 
