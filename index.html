@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ripples Remain</title>
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -27,10 +27,10 @@
   <div id="menu" class="hidden">
     <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
     <map name="songmap">
-      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
-      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
-      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
-      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
+      <area shape="rect" coords="0,0,600,400" href="javascript:void(0);" onclick="openSong(1)" />
+      <area shape="rect" coords="600,0,1200,400" href="javascript:void(0);" onclick="openSong(2)" />
+      <area shape="rect" coords="0,400,600,800" href="javascript:void(0);" onclick="openSong(3)" />
+      <area shape="rect" coords="600,400,1200,800" href="javascript:void(0);" onclick="openSong(4)" />
     </map>
   </div>
 
@@ -39,10 +39,10 @@
     <div class="menu-mobile-wrapper">
       <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
       <map name="songmap-mobile">
-        <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
-        <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
-        <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
-        <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
+        <area shape="rect" coords="0,0,1080,650" href="javascript:void(0);" onclick="openSong(1)" />
+        <area shape="rect" coords="0,650,1080,1300" href="javascript:void(0);" onclick="openSong(2)" />
+        <area shape="rect" coords="0,1300,1080,1950" href="javascript:void(0);" onclick="openSong(3)" />
+        <area shape="rect" coords="0,1950,1080,2600" href="javascript:void(0);" onclick="openSong(4)" />
       </map>
     </div>
   </div>
@@ -51,22 +51,22 @@
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <button class="back-btn" onclick="event.stopPropagation(); back()">&larr;</button>
         <div class="nav-zone left"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
       </div>
       <div class="song" id="song2">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <button class="back-btn" onclick="event.stopPropagation(); back()">&larr;</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
       </div>
       <div class="song" id="song3">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <button class="back-btn" onclick="event.stopPropagation(); back()">&larr;</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
       </div>
       <div class="song" id="song4">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <button class="back-btn" onclick="event.stopPropagation(); back()">&larr;</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right"></div>
       </div>
@@ -104,6 +104,7 @@
       document.getElementById('menu-mobile').classList.add('hidden');
       pauseAllAudio();
       document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
       if (isTabletOrDesktop()) {
         document.getElementById('menu').classList.remove('hidden');
       } else {
@@ -115,15 +116,14 @@
       pauseAllAudio();
       currentSong = n;
       document.getElementById('home').style.display = 'none';
-      document.getElementById('menu').style.display = 'none';
-      document.getElementById('menu-mobile').style.display = 'none';
+      document.getElementById('menu').classList.add('hidden');
+      document.getElementById('menu-mobile').classList.add('hidden');
       document.getElementById('main').classList.remove('hidden');
 
       const slider = document.getElementById('slider');
       slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
       document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
       const targetSong = document.getElementById(`song${n}`);
       const newAudio = document.createElement('audio');
       newAudio.controls = true;
@@ -137,8 +137,6 @@
       newAudio.setAttribute('playsinline', '');
       newAudio.setAttribute('preload', 'auto');
       targetSong.appendChild(newAudio);
-
-      window.scrollTo(0, document.body.scrollHeight);
     }
 
     function scrollToSong() {
@@ -213,3 +211,4 @@
   </script>
 </body>
 </html>
+
