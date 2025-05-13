@@ -115,27 +115,48 @@
 function openSong(n) {
   pauseAllAudio();
   currentSong = n;
+
   document.getElementById('menu').style.display = 'none';
   document.getElementById('menu-mobile').style.display = 'none';
   document.getElementById('main').classList.remove('hidden');
+
   const slider = document.getElementById('slider');
   slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  const targetAudio = document.querySelector(`#song${n} audio`);
-  if (targetAudio) {
-    targetAudio.controls = true;
-    targetAudio.load();
+  // 🔁 清除所有 audio
+  document.querySelectorAll('.song audio').forEach(audio => {
+    audio.remove();
+  });
 
-    // ✅ 強制觸發播放控制列顯示（對部分手機是必要的）
-    const fakeBtn = document.createElement('button');
-    fakeBtn.style.display = 'none';
-    document.body.appendChild(fakeBtn);
-    fakeBtn.click();
-    document.body.removeChild(fakeBtn);
-  }
+  // 🔧 動態建立新的 audio 控制元件
+  const targetSong = document.getElementById(`song${n}`);
+  const newAudio = document.createElement('audio');
+  newAudio.controls = true;
+  newAudio.src = getAudioSrc(n);
+  newAudio.style.position = 'absolute';
+  newAudio.style.bottom = '100px';
+  newAudio.style.left = '50%';
+  newAudio.style.transform = 'translateX(-50%)';
+  newAudio.style.width = '90%';
+  newAudio.style.maxWidth = '400px';
+  newAudio.setAttribute('playsinline', '');
+  newAudio.setAttribute('preload', 'auto');
+
+  targetSong.appendChild(newAudio);
 
   window.scrollTo(0, document.body.scrollHeight);
 }
+
+function getAudioSrc(n) {
+  switch (n) {
+    case 1: return 'WhispersofErosion.mp3';
+    case 2: return 'Metamorphosis.mp3';
+    case 3: return 'Echoes.mp3';
+    case 4: return 'Sea Frequency.mp3';
+    default: return '';
+  }
+}
+
 
     function prevSong() {
       if (currentSong === 1) {
