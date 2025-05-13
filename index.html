@@ -116,7 +116,7 @@ function openSong(n) {
 
   const targetAudio = document.querySelector(`#song${n} audio`);
   if (targetAudio) {
-    targetAudio.controls = true; // 只開啟當前歌曲的控制列
+    targetAudio.controls = true; .load(); // 只開啟當前歌曲的控制列
   }
 
   window.scrollTo(0, document.body.scrollHeight);
