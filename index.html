@@ -1,3 +1,4 @@
+你這個完全不行
 
 <!DOCTYPE html>
 
@@ -85,17 +86,6 @@
   <script>
     let currentSong = 1;
 
-function getAudioSrc(n) {
-  switch (n) {
-    case 1: return 'WhispersofErosion.mp3';
-    case 2: return 'Metamorphosis.mp3';
-    case 3: return 'Echoes.mp3';
-    case 4: return 'Sea Frequency.mp3';
-    default: return '';
-  }
-}
-
-
     function isTabletOrDesktop() {
       return window.innerWidth > 600;
     }
@@ -121,26 +111,7 @@ function getAudioSrc(n) {
       } else {
         document.getElementById('menu-mobile').classList.remove('hidden');
       }
-
     }
-
-function enterSite() {
-  document.getElementById('home').style.display = 'none';
-
-  // ✅ 模擬一次使用者點擊，解鎖 audio 控制列
-  const tempBtn = document.createElement('button');
-  tempBtn.style.display = 'none';
-  document.body.appendChild(tempBtn);
-  tempBtn.click();
-  document.body.removeChild(tempBtn);
-
-  if (isTabletOrDesktop()) {
-    document.getElementById('menu').classList.remove('hidden');
-  } else {
-    document.getElementById('menu-mobile').classList.remove('hidden');
-  }
-}
-
 
 function openSong(n) {
   pauseAllAudio();
@@ -153,21 +124,29 @@ function openSong(n) {
   const slider = document.getElementById('slider');
   slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  // 顯示目前這首歌的播放器，其他隱藏
-  document.querySelectorAll('.song audio').forEach((audio, index) => {
-    if (index === n - 1) {
-      audio.style.display = 'block';
-      audio.controls = true;
-      audio.load();
-    } else {
-      audio.style.display = 'none';
-      audio.controls = false;
-    }
+  // 🔁 清除所有 audio
+  document.querySelectorAll('.song audio').forEach(audio => {
+    audio.remove();
   });
+
+  // 🔧 動態建立新的 audio 控制元件
+  const targetSong = document.getElementById(`song${n}`);
+  const newAudio = document.createElement('audio');
+  newAudio.controls = true;
+  newAudio.src = getAudioSrc(n);
+  newAudio.style.position = 'absolute';
+  newAudio.style.bottom = '100px';
+  newAudio.style.left = '50%';
+  newAudio.style.transform = 'translateX(-50%)';
+  newAudio.style.width = '90%';
+  newAudio.style.maxWidth = '400px';
+  newAudio.setAttribute('playsinline', '');
+  newAudio.setAttribute('preload', 'auto');
+
+  targetSong.appendChild(newAudio);
 
   window.scrollTo(0, document.body.scrollHeight);
 }
-
 
 function getAudioSrc(n) {
   switch (n) {
@@ -178,10 +157,6 @@ function getAudioSrc(n) {
     default: return '';
   }
 }
-
-
-
-
     function prevSong() {
       if (currentSong === 1) {
         back();
@@ -199,28 +174,10 @@ function getAudioSrc(n) {
       scrollToSong();
     }
 
-function scrollToSong() {
-  const slider = document.getElementById('slider');
-  slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-
-  // 顯示目前這首歌的播放器，其他隱藏
-  document.querySelectorAll('.song audio').forEach((audio, index) => {
-    if (index === currentSong - 1) {
-      audio.style.display = 'block';
-      audio.controls = true;
-      audio.load();
-    } else {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.style.display = 'none';
-      audio.controls = false;
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
     }
-  });
-
-  window.scrollTo(0, document.body.scrollHeight);
-}
-
-
 
     function back() {
       pauseAllAudio();
@@ -232,32 +189,19 @@ function scrollToSong() {
       }
     }
   </script>
-
-  <script>
+<script>
   // 用戶首次互動時強制開啟 audio 控制列（解決 NFC 無播放列問題）
   document.addEventListener('touchstart', () => {
     document.querySelectorAll('audio').forEach(audio => {
       audio.controls = true;
     });
   }, { once: true });
-
-<script>
-  // 讓所有 audio 的 controls 顯示，在首次互動後才啟用（避免被 WebView 阻擋）
-  function enableAudioControls() {
-    document.querySelectorAll('audio').forEach(audio => {
-      audio.controls = true;
-      audio.load();
-    });
-  }
-
-  // 觸發機會：點擊首頁任一處時
-  document.addEventListener('click', enableAudioControls, { once: true });
-  document.addEventListener('touchstart', enableAudioControls, { once: true });
 </script>
-
-
-
-  
 
 </body>
 </html>
+
+我現在這個
+唯一問題 NFC
+沒有播放列
+
