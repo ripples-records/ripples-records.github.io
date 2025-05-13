@@ -134,26 +134,11 @@ function openSong(n) {
   const slider = document.getElementById('slider');
   slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  // 🔁 清除所有 audio
-  document.querySelectorAll('.song audio').forEach(audio => {
-    audio.remove();
+  // ✅ 只顯示當前歌曲的控制列
+  document.querySelectorAll('.song audio').forEach((audio, index) => {
+    audio.controls = (index === n - 1);
+    audio.load(); // 重設狀態
   });
-
-  // 🔧 動態建立新的 audio 控制元件
-  const targetSong = document.getElementById(`song${n}`);
-  const newAudio = document.createElement('audio');
-  newAudio.controls = true;
-  newAudio.src = getAudioSrc(n);
-  newAudio.style.position = 'absolute';
-  newAudio.style.bottom = '100px';
-  newAudio.style.left = '50%';
-  newAudio.style.transform = 'translateX(-50%)';
-  newAudio.style.width = '90%';
-  newAudio.style.maxWidth = '400px';
-  newAudio.setAttribute('playsinline', '');
-  newAudio.setAttribute('preload', 'auto');
-
-  targetSong.appendChild(newAudio);
 
   window.scrollTo(0, document.body.scrollHeight);
 }
@@ -190,29 +175,16 @@ function scrollToSong() {
   const slider = document.getElementById('slider');
   slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
 
-  // 🔁 移除所有 audio
-  document.querySelectorAll('.song audio').forEach(audio => {
-    audio.remove();
+  // ✅ 只顯示當前歌曲的控制列
+  document.querySelectorAll('.song audio').forEach((audio, index) => {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.controls = (index === currentSong - 1);
   });
-
-  // 🔧 建立新的 audio
-  const targetSong = document.getElementById(`song${currentSong}`);
-  const newAudio = document.createElement('audio');
-  newAudio.controls = true;
-  newAudio.src = getAudioSrc(currentSong);
-  newAudio.style.position = 'absolute';
-  newAudio.style.bottom = '100px';
-  newAudio.style.left = '50%';
-  newAudio.style.transform = 'translateX(-50%)';
-  newAudio.style.width = '90%';
-  newAudio.style.maxWidth = '400px';
-  newAudio.setAttribute('playsinline', '');
-  newAudio.setAttribute('preload', 'auto');
-
-  targetSong.appendChild(newAudio);
 
   window.scrollTo(0, document.body.scrollHeight);
 }
+
 
 
     function back() {
