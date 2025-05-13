@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    audio {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+    }
+  </style>
 </head>
 <body>
 
@@ -46,107 +53,107 @@
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="event.stopPropagation();"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="WhispersofErosion.mp3"></audio>
+        <audio controls playsinline preload="auto" src="WhispersofErosion.mp3"></audio>
       </div>
       <div class="song" id="song2">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Metamorphosis.mp3"></audio>
+        <audio controls playsinline preload="auto" src="Metamorphosis.mp3"></audio>
       </div>
       <div class="song" id="song3">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Echoes.mp3"></audio>
+        <audio controls playsinline preload="auto" src="Echoes.mp3"></audio>
       </div>
       <div class="song" id="song4">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Sea Frequency.mp3"></audio>
+        <audio controls playsinline preload="auto" src="Sea Frequency.mp3"></audio>
       </div>
     </div>
   </div>
 
   <script>
-  let currentSong = 1;
+    let currentSong = 1;
 
-  function isTabletOrDesktop() {
-    return window.innerWidth > 600;
-  }
-
-  function pauseAllAudio() {
-    document.querySelectorAll('audio').forEach(audio => {
-      audio.pause();
-      audio.currentTime = 0;
-    });
-  }
-
-function enterSite() {
-  document.getElementById('home').style.display = 'none';
-
-  // ✅ 提前啟用 audio 控制列（避免被瀏覽器阻擋）
-  document.querySelectorAll('audio').forEach(audio => {
-    audio.controls = true;
-  });
-
-  if (isTabletOrDesktop()) {
-    document.getElementById('menu').classList.remove('hidden');
-  } else {
-    document.getElementById('menu-mobile').classList.remove('hidden');
-  }
-}
-
-  function openSong(n) {
-    pauseAllAudio();
-    currentSong = n;
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('menu-mobile').style.display = 'none';
-    document.getElementById('main').classList.remove('hidden');
-    const slider = document.getElementById('slider');
-    slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
-    const targetAudio = document.querySelector(`#song${n} audio`);
-    if (targetAudio) {
-      targetAudio.controls = true;
-      targetAudio.load();
+    function isTabletOrDesktop() {
+      return window.innerWidth > 600;
     }
-    window.scrollTo(0, document.body.scrollHeight);
-  }
 
-  function prevSong() {
-    if (currentSong === 1) {
-      back();
-      return;
+    function pauseAllAudio() {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
     }
-    pauseAllAudio();
-    currentSong--;
-    scrollToSong();
-  }
 
-  function nextSong() {
-    if (currentSong === 4) return;
-    pauseAllAudio();
-    currentSong++;
-    scrollToSong();
-  }
+    function enterSite() {
+      document.getElementById('home').style.display = 'none';
 
-  function scrollToSong() {
-    const slider = document.getElementById('slider');
-    slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-  }
+      // 解鎖所有 audio 控制列
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.controls = true;
+        audio.load();
+      });
 
-  function back() {
-    pauseAllAudio();
-    document.getElementById('main').classList.add('hidden');
-    if (isTabletOrDesktop()) {
-      document.getElementById('menu').classList.remove('hidden');
-    } else {
-      document.getElementById('menu-mobile').classList.remove('hidden');
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
     }
-  }
+
+    function openSong(n) {
+      pauseAllAudio();
+      currentSong = n;
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('menu-mobile').style.display = 'none';
+      document.getElementById('main').classList.remove('hidden');
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
+      const targetAudio = document.querySelector(`#song${n} audio`);
+      if (targetAudio) {
+        targetAudio.controls = true;
+        targetAudio.load();
+      }
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function prevSong() {
+      if (currentSong === 1) {
+        back();
+        return;
+      }
+      pauseAllAudio();
+      currentSong--;
+      scrollToSong();
+    }
+
+    function nextSong() {
+      if (currentSong === 4) return;
+      pauseAllAudio();
+      currentSong++;
+      scrollToSong();
+    }
+
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
+    }
+
+    function back() {
+      pauseAllAudio();
+      document.getElementById('main').classList.add('hidden');
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
+    }
   </script>
 
 </body>
 </html>
-
