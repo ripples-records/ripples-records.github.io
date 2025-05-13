@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -24,37 +23,36 @@
     </picture>
   </div>
 
-  <!-- 四格選單（iPad 與桌機） -->
+  <!-- 桌機選單 -->
   <div id="menu" class="hidden">
     <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
     <map name="songmap">
-      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" alt="左上" />
-      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" alt="右上" />
-      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" alt="左下" />
-      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" alt="右下" />
+      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
+      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
+      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
+      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
     </map>
   </div>
 
-<!-- 手機四格選單（長圖） -->
-<div id="menu-mobile" class="hidden">
-  <div class="menu-mobile-wrapper">
-    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
-    <map name="songmap-mobile">
-      <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
-      <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
-      <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
-      <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
-    </map>
+  <!-- 手機選單 -->
+  <div id="menu-mobile" class="hidden">
+    <div class="menu-mobile-wrapper">
+      <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
+      <map name="songmap-mobile">
+        <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
+        <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
+        <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
+        <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
+      </map>
+    </div>
   </div>
-</div>
-
 
   <!-- 歌曲頁面 -->
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="event.stopPropagation();"></div>
+        <div class="nav-zone left"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
       </div>
       <div class="song" id="song2">
@@ -70,7 +68,7 @@
       <div class="song" id="song4">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
+        <div class="nav-zone right"></div>
       </div>
     </div>
   </div>
@@ -111,7 +109,7 @@
     function openSong(n) {
       pauseAllAudio();
       currentSong = n;
-
+      document.getElementById('home').style.display = 'none';
       document.getElementById('menu').style.display = 'none';
       document.getElementById('menu-mobile').style.display = 'none';
       document.getElementById('main').classList.remove('hidden');
@@ -138,32 +136,26 @@
       window.scrollTo(0, document.body.scrollHeight);
     }
 
-   function scrollToSong() {
-  const slider = document.getElementById('slider');
-  slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
 
-  // 移除所有 audio
-  document.querySelectorAll('.song audio').forEach(audio => {
-    audio.remove();
-  });
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
 
-  // 建立新的 audio
- const targetSong = document.getElementById(`song${currentSong}`);
-  const newAudio = document.createElement('audio');
-  newAudio.controls = true;
-  newAudio.src = getAudioSrc(currentSong);
-  newAudio.style.position = 'absolute';
-  newAudio.style.bottom = '100px';
-  newAudio.style.left = '50%';
-  newAudio.style.transform = 'translateX(-50%)';
-  newAudio.style.width = '90%';
-  newAudio.style.maxWidth = '400px';
-  newAudio.setAttribute('playsinline', '');
-  newAudio.setAttribute('preload', 'auto');
-
-  targetSong.appendChild(newAudio);
-}
-
+      const targetSong = document.getElementById(`song${currentSong}`);
+      const newAudio = document.createElement('audio');
+      newAudio.controls = true;
+      newAudio.src = getAudioSrc(currentSong);
+      newAudio.style.position = 'absolute';
+      newAudio.style.bottom = '100px';
+      newAudio.style.left = '50%';
+      newAudio.style.transform = 'translateX(-50%)';
+      newAudio.style.width = '90%';
+      newAudio.style.maxWidth = '400px';
+      newAudio.setAttribute('playsinline', '');
+      newAudio.setAttribute('preload', 'auto');
+      targetSong.appendChild(newAudio);
+    }
 
     function prevSong() {
       if (currentSong === 1) {
@@ -185,51 +177,42 @@
     function back() {
       pauseAllAudio();
       document.getElementById('main').classList.add('hidden');
-      if (isTabletOrDesktop()) {
-        document.getElementById('menu').classList.remove('hidden');
-      } else {
-        document.getElementById('menu-mobile').classList.remove('hidden');
-      }
-    }
-  </script>
 
-  <script>
+      // 顯示首頁
+      document.getElementById('home').style.display = 'block';
+      document.getElementById('menu').classList.add('hidden');
+      document.getElementById('menu-mobile').classList.add('hidden');
+    }
+
     document.addEventListener('touchstart', () => {
       document.querySelectorAll('audio').forEach(audio => {
         audio.controls = true;
       });
     }, { once: true });
 
-document.getElementById('slider').addEventListener('scroll', function () {
-  const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
+    document.getElementById('slider').addEventListener('scroll', function () {
+      const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
+      if (index !== currentSong) {
+        currentSong = index;
+        pauseAllAudio();
+        document.querySelectorAll('.song audio').forEach(audio => audio.remove());
 
-  if (index !== currentSong) {
-    currentSong = index;
-    pauseAllAudio();
-
-    // 移除所有 audio
-    document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
-    // 建立新的 audio
-  const targetSong = document.getElementById(`song${currentSong}`);
-    const newAudio = document.createElement('audio');
-    newAudio.controls = true;
-    newAudio.src = getAudioSrc(currentSong);
-    newAudio.style.position = 'absolute';
-    newAudio.style.bottom = '100px';
-    newAudio.style.left = '50%';
-    newAudio.style.transform = 'translateX(-50%)';
-    newAudio.style.width = '90%';
-    newAudio.style.maxWidth = '400px';
-    newAudio.setAttribute('playsinline', '');
-    newAudio.setAttribute('preload', 'auto');
-
-    targetSong.appendChild(newAudio);
-  }
-});
-
-
+        const targetSong = document.getElementById(`song${currentSong}`);
+        const newAudio = document.createElement('audio');
+        newAudio.controls = true;
+        newAudio.src = getAudioSrc(currentSong);
+        newAudio.style.position = 'absolute';
+        newAudio.style.bottom = '100px';
+        newAudio.style.left = '50%';
+        newAudio.style.transform = 'translateX(-50%)';
+        newAudio.style.width = '90%';
+        newAudio.style.maxWidth = '400px';
+        newAudio.setAttribute('playsinline', '');
+        newAudio.setAttribute('preload', 'auto');
+        targetSong.appendChild(newAudio);
+      }
+    });
   </script>
-
 </body>
 </html>
+
