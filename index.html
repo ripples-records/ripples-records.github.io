@@ -119,6 +119,19 @@
         targetAudio.controls = true;
         targetAudio.load();
       }
+
+const targetAudio = document.querySelector(`#song${n} audio`);
+if (targetAudio) {
+  targetAudio.controls = true;
+  targetAudio.load();
+
+  // ✅ 強制觸發播放控制列顯示（對部分手機是必要的）
+  const fakeBtn = document.createElement('button');
+  fakeBtn.style.display = 'none';
+  document.body.appendChild(fakeBtn);
+  fakeBtn.click();
+  document.body.removeChild(fakeBtn);
+}
       window.scrollTo(0, document.body.scrollHeight);
     }
 
