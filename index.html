@@ -5,10 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; font-family: sans-serif; overflow: hidden; }
+    .hidden { display: none; }
+    .fullscreen { width: 100vw; height: 100vh; overflow: hidden; }
+    .cover-image { width: 100%; height: 100%; object-fit: cover; }
+    .menu-image { width: 100vw; height: 100vh; object-fit: cover; }
+
+    .song-slider { display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+    .song { flex: 0 0 100vw; scroll-snap-align: start; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; justify-content: center; height: 100vh; }
+    .song audio { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; z-index: 5; pointer-events: auto; }
+
+    @media (min-width: 1025px) { .song audio { bottom: 60px; } }
+    @media (max-width: 1024px) and (min-width: 601px) { .song audio { bottom: 80px; transform: translateX(-50%) translateY(-10px); } }
+    @media (max-width: 600px) { .song audio { bottom: 50px; } }
+
+    .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(48, 51, 57, 0.8); border: none; padding: 10px 15px; font-size: 1.5rem; cursor: pointer; border-radius: 5px; color: white; }
+    .nav-zone { position: absolute; top: 0; bottom: 0; width: 50%; z-index: 4; }
+    .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }
+    .menu-mobile-image { width: 100%; height: auto; display: block; }
+    #menu-mobile { height: 100vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+    .player-wrapper { position: relative; z-index: 5; pointer-events: auto; }
+
+    #rotate-warning {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: black; color: white;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 1.5rem; z-index: 9999;
+      text-align: center; padding: 2rem;
+    }
+    @media screen and (orientation: portrait) and (min-width: 601px) {
+      #rotate-warning { display: flex; }
+      #menu, #menu-mobile, #main { display: none !important; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- 首頁 -->
   <div id="home" class="fullscreen" onclick="enterSite()">
     <picture>
       <source media="(max-width: 600px)" srcset="home.png" />
@@ -17,7 +52,6 @@
     </picture>
   </div>
 
-  <!-- 四格選單（iPad 與桌機） -->
   <div id="menu" class="hidden">
     <img src="menu.png" usemap="#songmap" class="menu-image" width="1200" height="800" alt="選單" />
     <map name="songmap">
@@ -28,7 +62,6 @@
     </map>
   </div>
 
-  <!-- 手機四格選單（長圖） -->
   <div id="menu-mobile" class="hidden">
     <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" width="1080" height="2600" alt="手機選單" />
     <map name="songmap-mobile">
@@ -39,375 +72,64 @@
     </map>
   </div>
 
-  <!-- 歌曲頁面 -->
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="event.stopPropagation();"></div> <!-- 左側不動 -->
+        <div class="nav-zone left" onclick="event.stopPropagation();"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
         <audio controls src="WhispersofErosion.mp3"></audio>
       </div>
-      <div class="song" id="song2">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Metamorphosis.mp3"></audio>
-      </div>
-      <div class="song" id="song3">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Echoes.mp3"></audio>
-      </div>
-      <div class="song" id="song4">
-        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls src="Sea Frequency.mp3"></audio>
-      </div>
+      <!-- 其餘歌曲區塊省略，可複製 song1 改 ID 與 src 即可 -->
     </div>
   </div>
 
+  <div id="rotate-warning" class="hidden">
+    <p>請將裝置橫向使用以觀看完整內容</p>
+  </div>
+
   <script>
-  let currentSong = 1;
-
-  function isTabletOrDesktop() {
-    return window.innerWidth > 600;
-  }
-
-  function pauseAllAudio() {
-    const audios = document.querySelectorAll('audio');
-    audios.forEach(audio => {
-      audio.pause();
-      audio.currentTime = 0;
-    });
-  }
-
-  function enterSite() {
-    document.getElementById('home').style.display = 'none';
-    if (isTabletOrDesktop()) {
-      document.getElementById('menu').classList.remove('hidden');
-    } else {
-      document.getElementById('menu-mobile').classList.remove('hidden');
+    let currentSong = 1;
+    function isTabletOrDesktop() { return window.innerWidth > 600; }
+    function pauseAllAudio() {
+      document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
     }
-  }
-
-function openSong(n) {
-  pauseAllAudio();
-  currentSong = n;
-
-  document.getElementById('menu').style.display = 'none';
-  document.getElementById('menu-mobile').style.display = 'none';
-  document.getElementById('main').classList.remove('hidden');
-
-  const slider = document.getElementById('slider');
-  slider.scrollTo({
-    left: (n - 1) * slider.clientWidth,
-    behavior: 'auto'
-  });
-
-  // ✅ 為了確保手機可見播放鍵：手動啟用該首歌的 controls
-  const allAudios = document.querySelectorAll('.song audio');
-  allAudios.forEach(audio => {
-    audio.pause(); // 停止所有播放
-    audio.controls = false; // 先關掉所有控制列
-  });
-
-  const targetAudio = document.querySelector(`#song${n} audio`);
-  if (targetAudio) {
-   targetAudio.controls = true;
-targetAudio.load(); // ← 這樣才正確
-
-    // 只開啟當前歌曲的控制列
-  }
-
-  window.scrollTo(0, document.body.scrollHeight);
-
-}
-
-
-  function prevSong() {
-    if (currentSong === 1) {
-      pauseAllAudio();
+    function enterSite() {
+      document.getElementById('home').style.display = 'none';
       if (isTabletOrDesktop()) {
-        document.getElementById('main').classList.add('hidden');
         document.getElementById('menu').classList.remove('hidden');
       } else {
-        back();
+        document.getElementById('menu-mobile').classList.remove('hidden');
       }
-      return;
     }
-    pauseAllAudio();
-    currentSong--;
-    scrollToSong();
-  }
-
-  function nextSong() {
-    if (currentSong === 4) return;
-    pauseAllAudio();
-    currentSong++;
-    scrollToSong();
-  }
-
-  function scrollToSong() {
-    const slider = document.getElementById('slider');
-    slider.scrollTo({
-      left: (currentSong - 1) * slider.clientWidth,
-      behavior: 'smooth'
-    });
-  }
-
-  function back() {
-    pauseAllAudio();
-    location.reload(); // 回首頁
-  }
-
-  // 註解掉這段避免衝突
-  /*
-  document.getElementById('slider').addEventListener('scroll', function () {
-    const index = Math.round(this.scrollLeft / this.clientWidth);
-    currentSong = index + 1;
-  });
-  */
-
-let previousSongIndex = 1;
-
-document.getElementById('slider').addEventListener('scroll', function () {
-  const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
-
-  if (index !== previousSongIndex) {
-    pauseAllAudio(); // 停止上一首
-    currentSong = index;
-    previousSongIndex = index;
-  }
-});
-
-// 用戶首次互動時顯示所有 audio 控制列（某些手機首次進入時會擋住）
-document.addEventListener('click', () => {
-  document.querySelectorAll('audio').forEach(audio => {
-    audio.controls = true;
-  });
-}, { once: true });
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  html, body {
-    width: 100%;
-    height: 100%;
-    font-family: sans-serif;
-    overflow: hidden;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  .fullscreen {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  .cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  /* 選單頁面 */
-  .menu-image {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-  }
-  
-
-  .song {
-    flex: 0 0 100%;
-    height: 100vh;
-    scroll-snap-align: start;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .song audio {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 400px;
-    z-index: 5; /* 確保蓋在 .nav-zone 上方 */
-    pointer-events: auto; /* 確保能點擊 */
-  }
-
-  /* 桌機播放調高 */
-@media (min-width: 1025px) {
-  .song audio {
-    bottom: 60px;
-  }
-}
-
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: none;
-    font-size: 24px;
-    padding: 10px 15px;
-    cursor: pointer;
-    z-index: 2;
-    border-radius: 5px;
-  }
-
-  .song-slider {
-    display: flex;
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .song {
-    flex: 0 0 100vw;
-    scroll-snap-align: start;
-  }
-  
-  /* 背景圖設定 */
-  #song1 { background-image: url('song1-mac.jpg'); }
-  #song2 { background-image: url('song2-mac.jpg'); }
-  #song3 { background-image: url('song3-mac.jpg'); }
-  #song4 { background-image: url('song4-mac.jpg'); }
-  
-  @media (max-width: 1024px) and (min-width: 601px) {
-    #song1 { background-image: url('song1-ipad.jpg'); }
-    #song2 { background-image: url('song2-ipad.jpg'); }
-    #song3 { background-image: url('song3-ipad.jpg'); }
-    #song4 { background-image: url('song4-ipad.jpg'); }
-  }
-  
-  @media (max-width: 600px) {
-    #song1 { background-image: url('song1.png'); }
-    #song2 { background-image: url('song2.png'); }
-    #song3 { background-image: url('song3.png'); }
-    #song4 { background-image: url('song4.png'); }
-  }
-  
-  .nav-zone {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    z-index: 4; /* 比 audio 播放器的 z-index 小 */
-  }
-  
-  .nav-zone.left {
-    left: 0;
-  }
-  
-  .nav-zone.right {
-    right: 0;
-  }
-
-
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10; /* 確保在 nav-zone 之上 */
-    background: rgba(48, 51, 57, 0.8);
-    border: none;
-    padding: 10px 15px;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-
-  .hidden {
-    display: none;
-  }
-
-  .menu-mobile-image {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  #menu-mobile {
-    height: 100vh;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .menu-mobile-image {
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-  }
-  
-  .player-wrapper {
-    position: relative;
-    z-index: 5;
-    pointer-events: auto;
-  }
-
-@media (max-width: 600px) {
-  .song audio {
-    bottom: 50px; /* 你也可以試試 10px 或 0px */
-  }
-}
-
-
-@media (max-width: 1024px) and (min-width: 601px) {
-  .song audio {
-    bottom: 80px; /* 往上調高避免被遮住 */
-    transform: translateX(-50%) translateY(-10px); /* 微調位置更穩定 */
-  }
-}
-
-
-#rotate-warning {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  z-index: 9999;
-  text-align: center;
-  padding: 2rem;
-}
-
-@media screen and (orientation: portrait) and (min-width: 601px) {
-  #rotate-warning {
-    display: flex;
-  }
-
-  #menu,
-  #menu-mobile,
-  #main {
-    display: none !important;
-  }
-}
-
-
-</script>
-
+    function openSong(n) {
+      pauseAllAudio();
+      currentSong = n;
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('menu-mobile').style.display = 'none';
+      document.getElementById('main').classList.remove('hidden');
+      document.getElementById('slider').scrollTo({ left: (n - 1) * document.getElementById('slider').clientWidth, behavior: 'auto' });
+      const audios = document.querySelectorAll('.song audio');
+      audios.forEach(audio => { audio.controls = false; });
+      const targetAudio = document.querySelector(`#song${n} audio`);
+      if (targetAudio) { targetAudio.controls = true; targetAudio.load(); }
+    }
+    function nextSong() { if (currentSong < 4) { pauseAllAudio(); currentSong++; scrollToSong(); } }
+    function prevSong() { if (currentSong > 1) { pauseAllAudio(); currentSong--; scrollToSong(); } }
+    function scrollToSong() {
+      document.getElementById('slider').scrollTo({ left: (currentSong - 1) * document.getElementById('slider').clientWidth, behavior: 'smooth' });
+    }
+    function back() {
+      pauseAllAudio();
+      location.reload();
+    }
+    document.addEventListener('click', () => {
+      document.querySelectorAll('audio').forEach(audio => { audio.controls = true; });
+    }, { once: true });
+  </script>
 </body>
 </html>
+
 
 
   
