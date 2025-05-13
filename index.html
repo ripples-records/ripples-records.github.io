@@ -83,14 +83,20 @@
     });
   }
 
-  function enterSite() {
-    document.getElementById('home').style.display = 'none';
-    if (isTabletOrDesktop()) {
-      document.getElementById('menu').classList.remove('hidden');
-    } else {
-      document.getElementById('menu-mobile').classList.remove('hidden');
-    }
+function enterSite() {
+  document.getElementById('home').style.display = 'none';
+
+  // ✅ 提前啟用 audio 控制列（避免被瀏覽器阻擋）
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.controls = true;
+  });
+
+  if (isTabletOrDesktop()) {
+    document.getElementById('menu').classList.remove('hidden');
+  } else {
+    document.getElementById('menu-mobile').classList.remove('hidden');
   }
+}
 
   function openSong(n) {
     pauseAllAudio();
