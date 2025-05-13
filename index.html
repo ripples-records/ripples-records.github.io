@@ -122,7 +122,7 @@
 
       document.querySelectorAll('.song audio').forEach(audio => audio.remove());
 
-      const targetSong = document.getElementById(`song${n}`);
+      const targetSong = document.getElementById(song${n});
       const newAudio = document.createElement('audio');
       newAudio.controls = true;
       newAudio.src = getAudioSrc(n);
@@ -149,7 +149,7 @@
   });
 
   // 建立新的 audio
-  const targetSong = document.getElementById(`song${currentSong}`);
+  const targetSong = document.getElementById(song${currentSong});
   const newAudio = document.createElement('audio');
   newAudio.controls = true;
   newAudio.src = getAudioSrc(currentSong);
@@ -212,7 +212,7 @@ document.getElementById('slider').addEventListener('scroll', function () {
     document.querySelectorAll('.song audio').forEach(audio => audio.remove());
 
     // 建立新的 audio
-   const targetSong = document.getElementById(`song${currentSong}`);
+   const targetSong = document.getElementById(song${currentSong});
     const newAudio = document.createElement('audio');
     newAudio.controls = true;
     newAudio.src = getAudioSrc(currentSong);
