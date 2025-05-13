@@ -141,12 +141,12 @@ audio {
   }
 
 
-
-  #menu-mobile {
-    height: 100vh;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
+#menu-mobile {
+  height: 100vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
+  position: relative;
+}
   
   .menu-mobile-image {
     display: block;
