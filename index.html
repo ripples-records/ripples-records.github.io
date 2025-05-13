@@ -1,149 +1,175 @@
+這樣改之後 我的首頁又無法點了
+
 <!DOCTYPE html>
+
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      font-family: sans-serif;
-    }
-    .fullscreen {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .cover-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    audio {
       display: block;
-    }
-    .hidden {
-      display: none;
-    }
-    .menu-image, .menu-mobile-image {
       width: 100%;
-      height: auto;
-      display: block;
-    }
-    .song-slider {
-      display: flex;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-    }
-    .song {
-      flex: 0 0 100vw;
-      height: 100vh;
-      scroll-snap-align: start;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      position: relative;
-    }
-    .song audio {
-      width: 90%;
       max-width: 400px;
-      margin-bottom: 40px;
-      z-index: 10;
-    }
-    .back-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 20;
-      padding: 10px 15px;
-      font-size: 1.5rem;
     }
   </style>
 </head>
 <body>
 
-<!-- 首頁 -->
-<div id="home" class="fullscreen" onclick="enterSite()">
-  <picture>
-    <source media="(max-width: 600px)" srcset="home.png" />
-    <source media="(max-width: 1024px)" srcset="home ipad.png" />
-    <img src="home mac.jpg" alt="進入網站" class="cover-image" />
-  </picture>
-</div>
+  <!-- 首頁 -->
 
-<!-- 選單頁面 -->
-<div id="menu" class="hidden">
-  <img src="menu.png" usemap="#songmap" class="menu-image" />
-  <map name="songmap">
-    <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
-    <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
-    <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
-    <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
-  </map>
-</div>
+  <div id="home" class="fullscreen" onclick="enterSite()">
+    <picture>
+      <source media="(max-width: 600px)" srcset="home.png" />
+      <source media="(max-width: 1024px)" srcset="home ipad.png" />
+      <img src="home mac.jpg" alt="進入網站" class="cover-image" />
+    </picture>
+  </div>
 
-<!-- 歌曲頁面 -->
-<div id="main" class="hidden">
-  <div class="song-slider" id="slider">
-    <div class="song" id="song1">
-      <button class="back-btn" onclick="back()">←</button>
-      <audio controls playsinline preload="metadata" src="WhispersofErosion.mp3"></audio>
-    </div>
-    <div class="song" id="song2">
-      <button class="back-btn" onclick="back()">←</button>
-      <audio controls playsinline preload="metadata" src="Metamorphosis.mp3"></audio>
-    </div>
-    <div class="song" id="song3">
-      <button class="back-btn" onclick="back()">←</button>
-      <audio controls playsinline preload="metadata" src="Echoes.mp3"></audio>
-    </div>
-    <div class="song" id="song4">
-      <button class="back-btn" onclick="back()">←</button>
-      <audio controls playsinline preload="metadata" src="Sea Frequency.mp3"></audio>
+  <!-- 四格選單（iPad 與桌機） -->
+
+  <div id="menu" class="hidden">
+    <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
+    <map name="songmap">
+      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" alt="左上" />
+      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" alt="右上" />
+      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" alt="左下" />
+      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" alt="右下" />
+    </map>
+  </div>
+
+  <!-- 手機四格選單（長圖） -->
+
+  <div id="menu-mobile" class="hidden">
+    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
+    <map name="songmap-mobile">
+      <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
+      <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
+      <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
+      <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
+    </map>
+  </div>
+
+  <!-- 歌曲頁面 -->
+
+  <div id="main" class="hidden">
+    <div class="song-slider" id="slider">
+      <div class="song" id="song1">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="event.stopPropagation();"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls playsinline preload="auto" src="WhispersofErosion.mp3"></audio>
+      </div>
+      <div class="song" id="song2">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls playsinline preload="auto" src="Metamorphosis.mp3"></audio>
+      </div>
+      <div class="song" id="song3">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls playsinline preload="auto" src="Echoes.mp3"></audio>
+      </div>
+      <div class="song" id="song4">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+        <audio controls playsinline preload="auto" src="Sea Frequency.mp3"></audio>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-let currentSong = 1;
+  <script>
+    let currentSong = 1;
 
-function pauseAllAudio() {
-  document.querySelectorAll('audio').forEach(audio => {
-    audio.pause();
-    audio.currentTime = 0;
-  });
-}
+    function isTabletOrDesktop() {
+      return window.innerWidth > 600;
+    }
 
-function enterSite() {
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('menu').classList.remove('hidden');
-}
+    function pauseAllAudio() {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+
+    function enterSite() {
+      document.getElementById('home').style.display = 'none';
+
+      // 解鎖所有 audio 控制列
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.controls = true;
+        audio.load();
+      });
+
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
+    }
 
 function openSong(n) {
+  pauseAllAudio();
   currentSong = n;
-  pauseAllAudio();
-
-  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('menu-mobile').style.display = 'none';
   document.getElementById('main').classList.remove('hidden');
-
   const slider = document.getElementById('slider');
-  slider.scrollTo({ left: (n - 1) * window.innerWidth, behavior: 'auto' });
+  slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  const audio = document.querySelector(`#song${n} audio`);
-  if (audio) {
-    audio.controls = true;
-    audio.load();
+  const targetAudio = document.querySelector(`#song${n} audio`);
+  if (targetAudio) {
+    targetAudio.controls = true;
+    targetAudio.load();
+
+    // ✅ 強制觸發播放控制列顯示（對部分手機是必要的）
+    const fakeBtn = document.createElement('button');
+    fakeBtn.style.display = 'none';
+    document.body.appendChild(fakeBtn);
+    fakeBtn.click();
+    document.body.removeChild(fakeBtn);
   }
+
+  window.scrollTo(0, document.body.scrollHeight);
 }
 
-function back() {
-  pauseAllAudio();
-  document.getElementById('main').classList.add('hidden');
-  document.getElementById('menu').classList.remove('hidden');
-}
-</script>
+    function prevSong() {
+      if (currentSong === 1) {
+        back();
+        return;
+      }
+      pauseAllAudio();
+      currentSong--;
+      scrollToSong();
+    }
+
+    function nextSong() {
+      if (currentSong === 4) return;
+      pauseAllAudio();
+      currentSong++;
+      scrollToSong();
+    }
+
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
+    }
+
+    function back() {
+      pauseAllAudio();
+      document.getElementById('main').classList.add('hidden');
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
+    }
+  </script>
 
 </body>
 </html>
-
