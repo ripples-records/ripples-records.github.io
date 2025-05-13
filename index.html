@@ -97,14 +97,22 @@
       });
     }
 
-    function enterSite() {
-      document.getElementById('home').style.display = 'none';
-      if (isTabletOrDesktop()) {
-        document.getElementById('menu').classList.remove('hidden');
-      } else {
-        document.getElementById('menu-mobile').classList.remove('hidden');
-      }
-    }
+function enterSite() {
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('main').classList.add('hidden');
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('menu-mobile').classList.add('hidden');
+
+  pauseAllAudio();
+  document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
+  if (isTabletOrDesktop()) {
+    document.getElementById('menu').classList.remove('hidden');
+  } else {
+    document.getElementById('menu-mobile').classList.remove('hidden');
+  }
+}
+
 
     function openSong(n) {
       pauseAllAudio();
