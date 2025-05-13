@@ -240,7 +240,22 @@ function scrollToSong() {
       audio.controls = true;
     });
   }, { once: true });
+
+<script>
+  // 讓所有 audio 的 controls 顯示，在首次互動後才啟用（避免被 WebView 阻擋）
+  function enableAudioControls() {
+    document.querySelectorAll('audio').forEach(audio => {
+      audio.controls = true;
+      audio.load();
+    });
+  }
+
+  // 觸發機會：點擊首頁任一處時
+  document.addEventListener('click', enableAudioControls, { once: true });
+  document.addEventListener('touchstart', enableAudioControls, { once: true });
 </script>
+
+
 
   
 
