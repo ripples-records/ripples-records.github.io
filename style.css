@@ -142,18 +142,23 @@ audio {
 
 
 #menu-mobile {
-  height: 100vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
-  position: relative;
+  width: 100%;
+  height: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
   
-  .menu-mobile-image {
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-  }
+.menu-mobile-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.menu-mobile-wrapper {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
   
   .player-wrapper {
     position: relative;
