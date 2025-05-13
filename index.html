@@ -85,6 +85,17 @@
   <script>
     let currentSong = 1;
 
+function getAudioSrc(n) {
+  switch (n) {
+    case 1: return 'WhispersofErosion.mp3';
+    case 2: return 'Metamorphosis.mp3';
+    case 3: return 'Echoes.mp3';
+    case 4: return 'Sea Frequency.mp3';
+    default: return '';
+  }
+}
+
+
     function isTabletOrDesktop() {
       return window.innerWidth > 600;
     }
@@ -175,10 +186,34 @@ function getAudioSrc(n) {
       scrollToSong();
     }
 
-    function scrollToSong() {
-      const slider = document.getElementById('slider');
-      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-    }
+function scrollToSong() {
+  const slider = document.getElementById('slider');
+  slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
+
+  // 🔁 移除所有 audio
+  document.querySelectorAll('.song audio').forEach(audio => {
+    audio.remove();
+  });
+
+  // 🔧 建立新的 audio
+  const targetSong = document.getElementById(`song${currentSong}`);
+  const newAudio = document.createElement('audio');
+  newAudio.controls = true;
+  newAudio.src = getAudioSrc(currentSong);
+  newAudio.style.position = 'absolute';
+  newAudio.style.bottom = '100px';
+  newAudio.style.left = '50%';
+  newAudio.style.transform = 'translateX(-50%)';
+  newAudio.style.width = '90%';
+  newAudio.style.maxWidth = '400px';
+  newAudio.setAttribute('playsinline', '');
+  newAudio.setAttribute('preload', 'auto');
+
+  targetSong.appendChild(newAudio);
+
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
 
     function back() {
       pauseAllAudio();
