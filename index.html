@@ -121,7 +121,26 @@ function getAudioSrc(n) {
       } else {
         document.getElementById('menu-mobile').classList.remove('hidden');
       }
+
     }
+
+function enterSite() {
+  document.getElementById('home').style.display = 'none';
+
+  // ✅ 模擬一次使用者點擊，解鎖 audio 控制列
+  const tempBtn = document.createElement('button');
+  tempBtn.style.display = 'none';
+  document.body.appendChild(tempBtn);
+  tempBtn.click();
+  document.body.removeChild(tempBtn);
+
+  if (isTabletOrDesktop()) {
+    document.getElementById('menu').classList.remove('hidden');
+  } else {
+    document.getElementById('menu-mobile').classList.remove('hidden');
+  }
+}
+
 
 function openSong(n) {
   pauseAllAudio();
@@ -134,10 +153,14 @@ function openSong(n) {
   const slider = document.getElementById('slider');
   slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  // ✅ 只顯示當前歌曲的控制列
+  // ✅ 只啟用目前那一首的控制列
   document.querySelectorAll('.song audio').forEach((audio, index) => {
+    audio.pause();
+    audio.currentTime = 0;
     audio.controls = (index === n - 1);
-    audio.load(); // 重設狀態
+    if (index === n - 1) {
+      audio.load(); // ⬅️ 這行很重要，會觸發 audio UI 顯示
+    }
   });
 
   window.scrollTo(0, document.body.scrollHeight);
@@ -152,6 +175,8 @@ function getAudioSrc(n) {
     default: return '';
   }
 }
+
+
 
 
     function prevSong() {
