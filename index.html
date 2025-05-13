@@ -97,22 +97,19 @@
       });
     }
 
-function enterSite() {
-  document.getElementById('home').style.display = 'none';
-  document.getElementById('main').classList.add('hidden');
-  document.getElementById('menu').classList.add('hidden');
-  document.getElementById('menu-mobile').classList.add('hidden');
-
-  pauseAllAudio();
-  document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
-  if (isTabletOrDesktop()) {
-    document.getElementById('menu').classList.remove('hidden');
-  } else {
-    document.getElementById('menu-mobile').classList.remove('hidden');
-  }
-}
-
+    function enterSite() {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('main').classList.add('hidden');
+      document.getElementById('menu').classList.add('hidden');
+      document.getElementById('menu-mobile').classList.add('hidden');
+      pauseAllAudio();
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+      if (isTabletOrDesktop()) {
+        document.getElementById('menu').classList.remove('hidden');
+      } else {
+        document.getElementById('menu-mobile').classList.remove('hidden');
+      }
+    }
 
     function openSong(n) {
       pauseAllAudio();
@@ -147,9 +144,7 @@ function enterSite() {
     function scrollToSong() {
       const slider = document.getElementById('slider');
       slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-
       document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
       const targetSong = document.getElementById(`song${currentSong}`);
       const newAudio = document.createElement('audio');
       newAudio.controls = true;
@@ -185,11 +180,7 @@ function enterSite() {
     function back() {
       pauseAllAudio();
       document.getElementById('main').classList.add('hidden');
-
-      // 顯示首頁
       document.getElementById('home').style.display = 'block';
-      document.getElementById('menu').classList.add('hidden');
-      document.getElementById('menu-mobile').classList.add('hidden');
     }
 
     document.addEventListener('touchstart', () => {
@@ -204,7 +195,6 @@ function enterSite() {
         currentSong = index;
         pauseAllAudio();
         document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
         const targetSong = document.getElementById(`song${currentSong}`);
         const newAudio = document.createElement('audio');
         newAudio.controls = true;
@@ -223,4 +213,3 @@ function enterSite() {
   </script>
 </body>
 </html>
-
