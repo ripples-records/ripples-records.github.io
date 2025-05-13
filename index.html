@@ -17,7 +17,6 @@
 <body>
 
   <!-- 首頁 -->
-
   <div id="home" class="fullscreen" onclick="enterSite()">
     <picture>
       <source media="(max-width: 600px)" srcset="home.png" />
@@ -27,7 +26,6 @@
   </div>
 
   <!-- 四格選單（iPad 與桌機） -->
-
   <div id="menu" class="hidden">
     <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
     <map name="songmap">
@@ -39,7 +37,6 @@
   </div>
 
   <!-- 手機四格選單（長圖） -->
-
   <div id="menu-mobile" class="hidden">
     <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
     <map name="songmap-mobile">
@@ -51,38 +48,43 @@
   </div>
 
   <!-- 歌曲頁面 -->
-
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="event.stopPropagation();"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls playsinline preload="auto" src="WhispersofErosion.mp3"></audio>
       </div>
       <div class="song" id="song2">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls playsinline preload="auto" src="Metamorphosis.mp3"></audio>
       </div>
       <div class="song" id="song3">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls playsinline preload="auto" src="Echoes.mp3"></audio>
       </div>
       <div class="song" id="song4">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
         <div class="nav-zone left" onclick="prevSong()"></div>
         <div class="nav-zone right" onclick="nextSong()"></div>
-        <audio controls playsinline preload="auto" src="Sea Frequency.mp3"></audio>
       </div>
     </div>
   </div>
 
   <script>
     let currentSong = 1;
+
+    function getAudioSrc(n) {
+      switch (n) {
+        case 1: return 'WhispersofErosion.mp3';
+        case 2: return 'Metamorphosis.mp3';
+        case 3: return 'Echoes.mp3';
+        case 4: return 'Sea Frequency.mp3';
+        default: return '';
+      }
+    }
 
     function isTabletOrDesktop() {
       return window.innerWidth > 600;
@@ -97,13 +99,6 @@
 
     function enterSite() {
       document.getElementById('home').style.display = 'none';
-
-      // 解鎖所有 audio 控制列
-      document.querySelectorAll('audio').forEach(audio => {
-        audio.controls = true;
-        audio.load();
-      });
-
       if (isTabletOrDesktop()) {
         document.getElementById('menu').classList.remove('hidden');
       } else {
@@ -111,50 +106,59 @@
       }
     }
 
-function openSong(n) {
-  pauseAllAudio();
-  currentSong = n;
+    function openSong(n) {
+      pauseAllAudio();
+      currentSong = n;
 
-  document.getElementById('menu').style.display = 'none';
-  document.getElementById('menu-mobile').style.display = 'none';
-  document.getElementById('main').classList.remove('hidden');
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('menu-mobile').style.display = 'none';
+      document.getElementById('main').classList.remove('hidden');
 
-  const slider = document.getElementById('slider');
-  slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
 
-  // 🔁 清除所有 audio
-  document.querySelectorAll('.song audio').forEach(audio => {
-    audio.remove();
-  });
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
 
-  // 🔧 動態建立新的 audio 控制元件
-  const targetSong = document.getElementById(`song${n}`);
-  const newAudio = document.createElement('audio');
-  newAudio.controls = true;
-  newAudio.src = getAudioSrc(n);
-  newAudio.style.position = 'absolute';
-  newAudio.style.bottom = '100px';
-  newAudio.style.left = '50%';
-  newAudio.style.transform = 'translateX(-50%)';
-  newAudio.style.width = '90%';
-  newAudio.style.maxWidth = '400px';
-  newAudio.setAttribute('playsinline', '');
-  newAudio.setAttribute('preload', 'auto');
+      const targetSong = document.getElementById(`song${n}`);
+      const newAudio = document.createElement('audio');
+      newAudio.controls = true;
+      newAudio.src = getAudioSrc(n);
+      newAudio.style.position = 'absolute';
+      newAudio.style.bottom = '100px';
+      newAudio.style.left = '50%';
+      newAudio.style.transform = 'translateX(-50%)';
+      newAudio.style.width = '90%';
+      newAudio.style.maxWidth = '400px';
+      newAudio.setAttribute('playsinline', '');
+      newAudio.setAttribute('preload', 'auto');
+      targetSong.appendChild(newAudio);
 
-  targetSong.appendChild(newAudio);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
 
-  window.scrollTo(0, document.body.scrollHeight);
-}
+    function scrollToSong() {
+      const slider = document.getElementById('slider');
+      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
 
-function getAudioSrc(n) {
-  switch (n) {
-    case 1: return 'WhispersofErosion.mp3';
-    case 2: return 'Metamorphosis.mp3';
-    case 3: return 'Echoes.mp3';
-    case 4: return 'Sea Frequency.mp3';
-    default: return '';
-  }
-}
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
+      const targetSong = document.getElementById(`song${currentSong}`);
+      const newAudio = document.createElement('audio');
+      newAudio.controls = true;
+      newAudio.src = getAudioSrc(currentSong);
+      newAudio.style.position = 'absolute';
+      newAudio.style.bottom = '100px';
+      newAudio.style.left = '50%';
+      newAudio.style.transform = 'translateX(-50%)';
+      newAudio.style.width = '90%';
+      newAudio.style.maxWidth = '400px';
+      newAudio.setAttribute('playsinline', '');
+      newAudio.setAttribute('preload', 'auto');
+      targetSong.appendChild(newAudio);
+
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
     function prevSong() {
       if (currentSong === 1) {
         back();
@@ -172,11 +176,6 @@ function getAudioSrc(n) {
       scrollToSong();
     }
 
-    function scrollToSong() {
-      const slider = document.getElementById('slider');
-      slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-    }
-
     function back() {
       pauseAllAudio();
       document.getElementById('main').classList.add('hidden');
@@ -187,19 +186,15 @@ function getAudioSrc(n) {
       }
     }
   </script>
-<script>
-  // 用戶首次互動時強制開啟 audio 控制列（解決 NFC 無播放列問題）
-  document.addEventListener('touchstart', () => {
-    document.querySelectorAll('audio').forEach(audio => {
-      audio.controls = true;
-    });
-  }, { once: true });
-</script>
+
+  <script>
+    document.addEventListener('touchstart', () => {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.controls = true;
+      });
+    }, { once: true });
+  </script>
 
 </body>
 </html>
-
-我現在這個
-唯一問題 NFC
-沒有播放列
 
