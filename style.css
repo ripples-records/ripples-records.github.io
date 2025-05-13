@@ -9,6 +9,10 @@
     font-family: sans-serif;
     overflow: hidden;
   }
+
+audio {
+  display: block !important;
+}
   
   .hidden {
     display: none;
