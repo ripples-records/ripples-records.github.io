@@ -4,40 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      font-family: sans-serif;
-      overflow-x: hidden;
-    }
-    .fullscreen {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .cover-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .hidden { display: none; }
-
-    .menu-image,
-    .menu-mobile-image {
+    audio {
       display: block;
       width: 100%;
-      height: auto;
+      max-width: 400px;
+      z-index: 5;
+      pointer-events: auto;
     }
 
     .menu-mobile-wrapper {
       position: relative;
       width: 100%;
+    }
+
+    .menu-mobile-image {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .mobile-area {
@@ -47,29 +32,11 @@
       height: 25%;
       cursor: pointer;
     }
+
     .mobile-area:nth-child(2) { top: 0%; }
     .mobile-area:nth-child(3) { top: 25%; }
     .mobile-area:nth-child(4) { top: 50%; }
     .mobile-area:nth-child(5) { top: 75%; }
-
-    .song-slider {
-      display: flex;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .song {
-      flex: 0 0 100vw;
-      height: 100vh;
-      scroll-snap-align: start;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
 
     .nav-zone {
       position: absolute;
@@ -77,70 +44,20 @@
       bottom: 0;
       width: 50%;
       z-index: 4;
-    }
-    .nav-zone.left { left: 0; }
-    .nav-zone.right { right: 0; }
-
-    .back-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      border: none;
-      font-size: 24px;
-      padding: 10px 15px;
-      cursor: pointer;
-      z-index: 10;
+      pointer-events: none; /* prevent blocking audio */
     }
 
-    .song audio {
-      position: absolute;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 400px;
-      z-index: 5;
-      pointer-events: auto;
+    .nav-zone.left,
+    .nav-zone.right {
+      pointer-events: auto; /* allow click on nav zones */
     }
 
-    @media (max-width: 600px) {
-      .song audio { bottom: 50px; }
+    .nav-zone.left {
+      left: 0;
     }
 
-    @media (min-width: 601px) and (max-width: 1024px) {
-      .song audio {
-        bottom: 80px;
-        transform: translateX(-50%) translateY(-10px);
-      }
-    }
-
-    #menu-mobile {
-      width: 100%;
-      min-height: 100vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* 背景圖 */
-    #song1 { background-image: url('song1-mac.jpg'); }
-    #song2 { background-image: url('song2-mac.jpg'); }
-    #song3 { background-image: url('song3-mac.jpg'); }
-    #song4 { background-image: url('song4-mac.jpg'); }
-
-    @media (max-width: 1024px) and (min-width: 601px) {
-      #song1 { background-image: url('song1-ipad.jpg'); }
-      #song2 { background-image: url('song2-ipad.jpg'); }
-      #song3 { background-image: url('song3-ipad.jpg'); }
-      #song4 { background-image: url('song4-ipad.jpg'); }
-    }
-
-    @media (max-width: 600px) {
-      #song1 { background-image: url('song1.png'); }
-      #song2 { background-image: url('song2.png'); }
-      #song3 { background-image: url('song3.png'); }
-      #song4 { background-image: url('song4.png'); }
+    .nav-zone.right {
+      right: 0;
     }
   </style>
 </head>
@@ -154,18 +71,7 @@
     </picture>
   </div>
 
-  <!-- 桌機選單 -->
-  <div id="menu" class="hidden">
-    <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
-    <map name="songmap">
-      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
-      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
-      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
-      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
-    </map>
-  </div>
-
-  <!-- 手機選單 -->
+  <!-- 手機版選單 -->
   <div id="menu-mobile" class="hidden">
     <div class="menu-mobile-wrapper">
       <img src="menu-phone.jpg" class="menu-mobile-image" alt="手機選單" />
@@ -176,27 +82,27 @@
     </div>
   </div>
 
-  <!-- 歌曲區 -->
+  <!-- 歌曲頁面 -->
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
+        <div class="nav-zone left" onclick="event.stopPropagation(); prevSong()"></div>
+        <div class="nav-zone right" onclick="event.stopPropagation(); nextSong()"></div>
       </div>
       <div class="song" id="song2">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
+        <div class="nav-zone left" onclick="event.stopPropagation(); prevSong()"></div>
+        <div class="nav-zone right" onclick="event.stopPropagation(); nextSong()"></div>
       </div>
       <div class="song" id="song3">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
-        <div class="nav-zone right" onclick="nextSong()"></div>
+        <div class="nav-zone left" onclick="event.stopPropagation(); prevSong()"></div>
+        <div class="nav-zone right" onclick="event.stopPropagation(); nextSong()"></div>
       </div>
       <div class="song" id="song4">
         <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
-        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone left" onclick="event.stopPropagation(); prevSong()"></div>
         <div class="nav-zone right"></div>
       </div>
     </div>
@@ -204,12 +110,15 @@
 
   <script>
     let currentSong = 1;
-    let isScrollingProgrammatically = false;
 
     function getAudioSrc(n) {
-      return [
-        '', 'WhispersofErosion.mp3', 'Metamorphosis.mp3', 'Echoes.mp3', 'Sea Frequency.mp3'
-      ][n];
+      switch (n) {
+        case 1: return 'WhispersofErosion.mp3';
+        case 2: return 'Metamorphosis.mp3';
+        case 3: return 'Echoes.mp3';
+        case 4: return 'Sea Frequency.mp3';
+        default: return '';
+      }
     }
 
     function isTabletOrDesktop() {
@@ -217,8 +126,9 @@
     }
 
     function pauseAllAudio() {
-      document.querySelectorAll('audio').forEach(a => {
-        a.pause(); a.currentTime = 0;
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
       });
     }
 
@@ -226,7 +136,8 @@
       document.getElementById('home').style.display = 'none';
       document.getElementById('main').classList.add('hidden');
       pauseAllAudio();
-      document.querySelectorAll('.song audio').forEach(a => a.remove());
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
       if (isTabletOrDesktop()) {
         document.getElementById('menu').classList.remove('hidden');
         document.getElementById('menu-mobile').classList.add('hidden');
@@ -246,58 +157,62 @@
       document.getElementById('main').classList.remove('hidden');
 
       const slider = document.getElementById('slider');
-      isScrollingProgrammatically = true;
       slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
-      setTimeout(() => isScrollingProgrammatically = false, 300);
 
-      document.querySelectorAll('.song audio').forEach(a => a.remove());
-      const song = document.getElementById(`song${n}`);
-      const audio = document.createElement('audio');
-      audio.controls = true;
-      audio.src = getAudioSrc(n);
-      audio.setAttribute('playsinline', '');
-      audio.setAttribute('preload', 'auto');
-      audio.style = `
-        position: absolute;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 400px;
-      `;
-      song.appendChild(audio);
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
+      const targetSong = document.getElementById(`song${n}`);
+      const newAudio = document.createElement('audio');
+      newAudio.controls = true;
+      newAudio.src = getAudioSrc(n);
+      newAudio.style.position = 'absolute';
+      newAudio.style.bottom = '100px';
+      newAudio.style.left = '50%';
+      newAudio.style.transform = 'translateX(-50%)';
+      newAudio.style.width = '90%';
+      newAudio.style.maxWidth = '400px';
+      newAudio.setAttribute('playsinline', '');
+      newAudio.setAttribute('preload', 'auto');
+      targetSong.appendChild(newAudio);
+
       window.scrollTo(0, document.body.scrollHeight);
     }
 
     function scrollToSong() {
       const slider = document.getElementById('slider');
       slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-      document.querySelectorAll('.song audio').forEach(a => a.remove());
-      const song = document.getElementById(`song${currentSong}`);
-      const audio = document.createElement('audio');
-      audio.controls = true;
-      audio.src = getAudioSrc(currentSong);
-      audio.setAttribute('playsinline', '');
-      audio.setAttribute('preload', 'auto');
-      audio.style = `
-        position: absolute;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 400px;
-      `;
-      song.appendChild(audio);
+
+      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+      const targetSong = document.getElementById(`song${currentSong}`);
+      const newAudio = document.createElement('audio');
+      newAudio.controls = true;
+      newAudio.src = getAudioSrc(currentSong);
+      newAudio.style.position = 'absolute';
+      newAudio.style.bottom = '100px';
+      newAudio.style.left = '50%';
+      newAudio.style.transform = 'translateX(-50%)';
+      newAudio.style.width = '90%';
+      newAudio.style.maxWidth = '400px';
+      newAudio.setAttribute('playsinline', '');
+      newAudio.setAttribute('preload', 'auto');
+      targetSong.appendChild(newAudio);
+    }
+
+    function prevSong() {
+      if (currentSong === 1) {
+        back();
+        return;
+      }
+      pauseAllAudio();
+      currentSong--;
+      scrollToSong();
     }
 
     function nextSong() {
       if (currentSong === 4) return;
-      pauseAllAudio(); currentSong++; scrollToSong();
-    }
-
-    function prevSong() {
-      if (currentSong === 1) { back(); return; }
-      pauseAllAudio(); currentSong--; scrollToSong();
+      pauseAllAudio();
+      currentSong++;
+      scrollToSong();
     }
 
     function back() {
@@ -309,31 +224,31 @@
     }
 
     document.addEventListener('touchstart', () => {
-      document.querySelectorAll('audio').forEach(a => a.controls = true);
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.controls = true;
+      });
     }, { once: true });
 
     document.getElementById('slider').addEventListener('scroll', function () {
-      if (isScrollingProgrammatically) return;
       const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
       if (index !== currentSong) {
         currentSong = index;
         pauseAllAudio();
-        document.querySelectorAll('.song audio').forEach(a => a.remove());
-        const song = document.getElementById(`song${currentSong}`);
-        const audio = document.createElement('audio');
-        audio.controls = true;
-        audio.src = getAudioSrc(currentSong);
-        audio.setAttribute('playsinline', '');
-        audio.setAttribute('preload', 'auto');
-        audio.style = `
-          position: absolute;
-          bottom: 100px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 90%;
-          max-width: 400px;
-        `;
-        song.appendChild(audio);
+        document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
+        const targetSong = document.getElementById(`song${currentSong}`);
+        const newAudio = document.createElement('audio');
+        newAudio.controls = true;
+        newAudio.src = getAudioSrc(currentSong);
+        newAudio.style.position = 'absolute';
+        newAudio.style.bottom = '100px';
+        newAudio.style.left = '50%';
+        newAudio.style.transform = 'translateX(-50%)';
+        newAudio.style.width = '90%';
+        newAudio.style.maxWidth = '400px';
+        newAudio.setAttribute('playsinline', '');
+        newAudio.setAttribute('preload', 'auto');
+        targetSong.appendChild(newAudio);
       }
     });
   </script>
