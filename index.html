@@ -4,23 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ripples Remain</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
-    audio {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: sans-serif;
+      overflow-x: hidden;
+    }
+    .fullscreen {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .cover-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hidden { display: none; }
+
+    .menu-image,
+    .menu-mobile-image {
       display: block;
       width: 100%;
-      max-width: 400px;
+      height: auto;
     }
 
     .menu-mobile-wrapper {
       position: relative;
       width: 100%;
-    }
-
-    .menu-mobile-image {
-      width: 100%;
-      height: auto;
-      display: block;
     }
 
     .mobile-area {
@@ -30,11 +47,101 @@
       height: 25%;
       cursor: pointer;
     }
-
     .mobile-area:nth-child(2) { top: 0%; }
     .mobile-area:nth-child(3) { top: 25%; }
     .mobile-area:nth-child(4) { top: 50%; }
     .mobile-area:nth-child(5) { top: 75%; }
+
+    .song-slider {
+      display: flex;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .song {
+      flex: 0 0 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .nav-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      z-index: 4;
+    }
+    .nav-zone.left { left: 0; }
+    .nav-zone.right { right: 0; }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      font-size: 24px;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .song audio {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      z-index: 5;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 600px) {
+      .song audio { bottom: 50px; }
+    }
+
+    @media (min-width: 601px) and (max-width: 1024px) {
+      .song audio {
+        bottom: 80px;
+        transform: translateX(-50%) translateY(-10px);
+      }
+    }
+
+    #menu-mobile {
+      width: 100%;
+      min-height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 背景圖 */
+    #song1 { background-image: url('song1-mac.jpg'); }
+    #song2 { background-image: url('song2-mac.jpg'); }
+    #song3 { background-image: url('song3-mac.jpg'); }
+    #song4 { background-image: url('song4-mac.jpg'); }
+
+    @media (max-width: 1024px) and (min-width: 601px) {
+      #song1 { background-image: url('song1-ipad.jpg'); }
+      #song2 { background-image: url('song2-ipad.jpg'); }
+      #song3 { background-image: url('song3-ipad.jpg'); }
+      #song4 { background-image: url('song4-ipad.jpg'); }
+    }
+
+    @media (max-width: 600px) {
+      #song1 { background-image: url('song1.png'); }
+      #song2 { background-image: url('song2.png'); }
+      #song3 { background-image: url('song3.png'); }
+      #song4 { background-image: url('song4.png'); }
+    }
   </style>
 </head>
 <body>
@@ -69,7 +176,7 @@
     </div>
   </div>
 
-  <!-- 歌曲頁面 -->
+  <!-- 歌曲區 -->
   <div id="main" class="hidden">
     <div class="song-slider" id="slider">
       <div class="song" id="song1">
@@ -97,15 +204,12 @@
 
   <script>
     let currentSong = 1;
+    let isScrollingProgrammatically = false;
 
     function getAudioSrc(n) {
-      switch (n) {
-        case 1: return 'WhispersofErosion.mp3';
-        case 2: return 'Metamorphosis.mp3';
-        case 3: return 'Echoes.mp3';
-        case 4: return 'Sea Frequency.mp3';
-        default: return '';
-      }
+      return [
+        '', 'WhispersofErosion.mp3', 'Metamorphosis.mp3', 'Echoes.mp3', 'Sea Frequency.mp3'
+      ][n];
     }
 
     function isTabletOrDesktop() {
@@ -113,9 +217,8 @@
     }
 
     function pauseAllAudio() {
-      document.querySelectorAll('audio').forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
+      document.querySelectorAll('audio').forEach(a => {
+        a.pause(); a.currentTime = 0;
       });
     }
 
@@ -123,8 +226,7 @@
       document.getElementById('home').style.display = 'none';
       document.getElementById('main').classList.add('hidden');
       pauseAllAudio();
-      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
+      document.querySelectorAll('.song audio').forEach(a => a.remove());
       if (isTabletOrDesktop()) {
         document.getElementById('menu').classList.remove('hidden');
         document.getElementById('menu-mobile').classList.add('hidden');
@@ -144,62 +246,58 @@
       document.getElementById('main').classList.remove('hidden');
 
       const slider = document.getElementById('slider');
+      isScrollingProgrammatically = true;
       slider.scrollTo({ left: (n - 1) * slider.clientWidth, behavior: 'auto' });
+      setTimeout(() => isScrollingProgrammatically = false, 300);
 
-      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
-      const targetSong = document.getElementById(song${n});
-      const newAudio = document.createElement('audio');
-      newAudio.controls = true;
-      newAudio.src = getAudioSrc(n);
-      newAudio.style.position = 'absolute';
-      newAudio.style.bottom = '100px';
-      newAudio.style.left = '50%';
-      newAudio.style.transform = 'translateX(-50%)';
-      newAudio.style.width = '90%';
-      newAudio.style.maxWidth = '400px';
-      newAudio.setAttribute('playsinline', '');
-      newAudio.setAttribute('preload', 'auto');
-      targetSong.appendChild(newAudio);
-
+      document.querySelectorAll('.song audio').forEach(a => a.remove());
+      const song = document.getElementById(`song${n}`);
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = getAudioSrc(n);
+      audio.setAttribute('playsinline', '');
+      audio.setAttribute('preload', 'auto');
+      audio.style = `
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 400px;
+      `;
+      song.appendChild(audio);
       window.scrollTo(0, document.body.scrollHeight);
     }
 
     function scrollToSong() {
       const slider = document.getElementById('slider');
       slider.scrollTo({ left: (currentSong - 1) * slider.clientWidth, behavior: 'smooth' });
-
-      document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-      const targetSong = document.getElementById(song${currentSong});
-      const newAudio = document.createElement('audio');
-      newAudio.controls = true;
-      newAudio.src = getAudioSrc(currentSong);
-      newAudio.style.position = 'absolute';
-      newAudio.style.bottom = '100px';
-      newAudio.style.left = '50%';
-      newAudio.style.transform = 'translateX(-50%)';
-      newAudio.style.width = '90%';
-      newAudio.style.maxWidth = '400px';
-      newAudio.setAttribute('playsinline', '');
-      newAudio.setAttribute('preload', 'auto');
-      targetSong.appendChild(newAudio);
-    }
-
-    function prevSong() {
-      if (currentSong === 1) {
-        back();
-        return;
-      }
-      pauseAllAudio();
-      currentSong--;
-      scrollToSong();
+      document.querySelectorAll('.song audio').forEach(a => a.remove());
+      const song = document.getElementById(`song${currentSong}`);
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = getAudioSrc(currentSong);
+      audio.setAttribute('playsinline', '');
+      audio.setAttribute('preload', 'auto');
+      audio.style = `
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 400px;
+      `;
+      song.appendChild(audio);
     }
 
     function nextSong() {
       if (currentSong === 4) return;
-      pauseAllAudio();
-      currentSong++;
-      scrollToSong();
+      pauseAllAudio(); currentSong++; scrollToSong();
+    }
+
+    function prevSong() {
+      if (currentSong === 1) { back(); return; }
+      pauseAllAudio(); currentSong--; scrollToSong();
     }
 
     function back() {
@@ -211,256 +309,34 @@
     }
 
     document.addEventListener('touchstart', () => {
-      document.querySelectorAll('audio').forEach(audio => {
-        audio.controls = true;
-      });
+      document.querySelectorAll('audio').forEach(a => a.controls = true);
     }, { once: true });
 
     document.getElementById('slider').addEventListener('scroll', function () {
+      if (isScrollingProgrammatically) return;
       const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
       if (index !== currentSong) {
         currentSong = index;
         pauseAllAudio();
-        document.querySelectorAll('.song audio').forEach(audio => audio.remove());
-
-        const targetSong = document.getElementById(song${currentSong});
-        const newAudio = document.createElement('audio');
-        newAudio.controls = true;
-        newAudio.src = getAudioSrc(currentSong);
-        newAudio.style.position = 'absolute';
-        newAudio.style.bottom = '100px';
-        newAudio.style.left = '50%';
-        newAudio.style.transform = 'translateX(-50%)';
-        newAudio.style.width = '90%';
-        newAudio.style.maxWidth = '400px';
-        newAudio.setAttribute('playsinline', '');
-        newAudio.setAttribute('preload', 'auto');
-        targetSong.appendChild(newAudio);
+        document.querySelectorAll('.song audio').forEach(a => a.remove());
+        const song = document.getElementById(`song${currentSong}`);
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = getAudioSrc(currentSong);
+        audio.setAttribute('playsinline', '');
+        audio.setAttribute('preload', 'auto');
+        audio.style = `
+          position: absolute;
+          bottom: 100px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 90%;
+          max-width: 400px;
+        `;
+        song.appendChild(audio);
       }
     });
   </script>
 </body>
 </html>
-
-
-CSS:
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  html, body {
-    width: 100%;
-    height: 100%;
-    font-family: sans-serif;
-      overflow-x: hidden;
-  }
-
-audio {
-  display: block !important;
-}
-  
-  .hidden {
-    display: none;
-  }
-  
-  .fullscreen {
-    width: 100vw;
-    height: 100vh;
-     overflow-x: hidden;
-  }
-  .cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-
-
-  .song {
-    flex: 0 0 100%;
-    height: 100vh;
-    scroll-snap-align: start;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .song audio {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 400px;
-    z-index: 5; /* 確保蓋在 .nav-zone 上方 */
-    pointer-events: auto; /* 確保能點擊 */
-  }
-
-  /* 桌機播放調高 */
-@media (min-width: 1025px) {
-  .song audio {
-    bottom: 60px;
-  }
-}
-
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: none;
-    font-size: 24px;
-    padding: 10px 15px;
-    cursor: pointer;
-    z-index: 2;
-    border-radius: 5px;
-  }
-
-  .song-slider {
-    display: flex;
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .song {
-    flex: 0 0 100vw;
-    scroll-snap-align: start;
-  }
-  
-  /* 背景圖設定 */
-  #song1 { background-image: url('song1-mac.jpg'); }
-  #song2 { background-image: url('song2-mac.jpg'); }
-  #song3 { background-image: url('song3-mac.jpg'); }
-  #song4 { background-image: url('song4-mac.jpg'); }
-  
-  @media (max-width: 1024px) and (min-width: 601px) {
-    #song1 { background-image: url('song1-ipad.jpg'); }
-    #song2 { background-image: url('song2-ipad.jpg'); }
-    #song3 { background-image: url('song3-ipad.jpg'); }
-    #song4 { background-image: url('song4-ipad.jpg'); }
-  }
-  
-  @media (max-width: 600px) {
-    #song1 { background-image: url('song1.png'); }
-    #song2 { background-image: url('song2.png'); }
-    #song3 { background-image: url('song3.png'); }
-    #song4 { background-image: url('song4.png'); }
-  }
-  
-  .nav-zone {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    z-index: 4; /* 比 audio 播放器的 z-index 小 */
-  }
-  
-  .nav-zone.left {
-    left: 0;
-  }
-  
-  .nav-zone.right {
-    right: 0;
-  }
-
-
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10; /* 確保在 nav-zone 之上 */
-    background: rgba(48, 51, 57, 0.8);
-    border: none;
-    padding: 10px 15px;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-
-  .hidden {
-    display: none;
-  }
-
-
-#menu-mobile {
-  width: 100%;
-  min-height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-  
-.menu-mobile-image {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.menu-mobile-wrapper {
-  width: 100%;
-  height: auto;
-  position: relative;
-}
-  
-  .player-wrapper {
-    position: relative;
-    z-index: 5;
-    pointer-events: auto;
-  }
-
-@media (max-width: 600px) {
-  .song audio {
-    bottom: 50px; /* 你也可以試試 10px 或 0px */
-  }
-}
-
-
-@media (max-width: 1024px) and (min-width: 601px) {
-  .song audio {
-    bottom: 80px; /* 往上調高避免被遮住 */
-    transform: translateX(-50%) translateY(-10px); /* 微調位置更穩定 */
-  }
-}
-
-
-#rotate-warning {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  z-index: 9999;
-  text-align: center;
-  padding: 2rem;
-}
-
-@media screen and (orientation: portrait) and (min-width: 601px) {
-  #rotate-warning {
-    display: flex;
-  }
-
-  #menu,
-  #menu-mobile,
-  #main {
-    display: none !important;
-  }
-
-.menu-image,
-.menu-mobile-image {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-}
 
