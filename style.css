@@ -224,6 +224,16 @@ audio {
   pointer-events: none; /* 這行是重點 */
 }
 
+.menu-image {
+  width: auto;
+  height: 100vh;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+
 
 }
 
