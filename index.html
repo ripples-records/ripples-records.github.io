@@ -1,4 +1,78 @@
-<script>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ripples Remain</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    audio {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 首頁 -->
+  <div id="home" class="fullscreen" onclick="enterSite()">
+    <picture>
+      <source media="(max-width: 600px)" srcset="home.png" />
+      <source media="(max-width: 1024px)" srcset="home ipad.png" />
+      <img src="home mac.jpg" alt="進入網站" class="cover-image" />
+    </picture>
+  </div>
+
+  <!-- 四格選單（iPad 與桌機） -->
+  <div id="menu" class="hidden">
+    <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
+    <map name="songmap">
+      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
+      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
+      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
+      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
+    </map>
+  </div>
+
+  <!-- 手機四格選單（長圖） -->
+  <div id="menu-mobile" class="hidden">
+    <img src="menu-phone.jpg" usemap="#songmap-mobile" class="menu-mobile-image" alt="手機選單" />
+    <map name="songmap-mobile">
+      <area shape="rect" coords="0,0,1080,650" href="#" onclick="openSong(1)" />
+      <area shape="rect" coords="0,650,1080,1300" href="#" onclick="openSong(2)" />
+      <area shape="rect" coords="0,1300,1080,1950" href="#" onclick="openSong(3)" />
+      <area shape="rect" coords="0,1950,1080,2600" href="#" onclick="openSong(4)" />
+    </map>
+  </div>
+
+  <!-- 歌曲頁面 -->
+  <div id="main" class="hidden">
+    <div class="song-slider" id="slider">
+      <div class="song" id="song1">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="event.stopPropagation();"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+      </div>
+      <div class="song" id="song2">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+      </div>
+      <div class="song" id="song3">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+      </div>
+      <div class="song" id="song4">
+        <button class="back-btn" onclick="event.stopPropagation(); back()">←</button>
+        <div class="nav-zone left" onclick="prevSong()"></div>
+        <div class="nav-zone right" onclick="nextSong()"></div>
+      </div>
+    </div>
+  </div>
+
+ <script>
   let currentSong = 1;
 
   function getAudioSrc(n) {
@@ -127,3 +201,6 @@
   }, { once: true });
 </script>
 
+
+</body>
+</html>
