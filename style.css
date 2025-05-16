@@ -219,13 +219,13 @@ audio {
 
 
 .menu-image {
+  max-height: 100vh;
   width: auto;
-  height: 100vh;
   max-width: 100%;
   display: block;
-  object-fit: contain;
   margin: 0 auto;
 }
+
 
 
 
