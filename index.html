@@ -28,15 +28,12 @@
 
   <!-- 四格選單（iPad 與桌機） -->
 
-  <div id="menu" class="hidden">
-    <img src="menu.png" usemap="#songmap" class="menu-image" alt="選單" />
-    <map name="songmap">
-      <area shape="rect" coords="0,0,600,400" href="#" onclick="openSong(1)" />
-      <area shape="rect" coords="600,0,1200,400" href="#" onclick="openSong(2)" />
-      <area shape="rect" coords="0,400,600,800" href="#" onclick="openSong(3)" />
-      <area shape="rect" coords="600,400,1200,800" href="#" onclick="openSong(4)" />
-    </map>
-  </div>
+<div id="menu" class="hidden menu-wrapper">
+  <div class="menu-zone" id="zone-1" onclick="openSong(1)"></div>
+  <div class="menu-zone" id="zone-2" onclick="openSong(2)"></div>
+  <div class="menu-zone" id="zone-3" onclick="openSong(3)"></div>
+  <div class="menu-zone" id="zone-4" onclick="openSong(4)"></div>
+</div>
 
   <!-- 手機四格選單（長圖） -->
 
