@@ -192,6 +192,34 @@
   </script>
 
   <script>
+
+document.getElementById('slider').addEventListener('scroll', function () {
+  const index = Math.round(this.scrollLeft / this.clientWidth) + 1;
+
+  if (index !== currentSong) {
+    currentSong = index;
+    pauseAllAudio();
+
+    // 移除所有 audio
+    document.querySelectorAll('.song audio').forEach(audio => audio.remove());
+
+    // 建立新的 audio
+    const targetSong = document.getElementById(`song${currentSong}`);
+    const newAudio = document.createElement('audio');
+    newAudio.controls = true;
+    newAudio.src = getAudioSrc(currentSong);
+    newAudio.style.position = 'absolute';
+    newAudio.style.bottom = '100px';
+    newAudio.style.left = '50%';
+    newAudio.style.transform = 'translateX(-50%)';
+    newAudio.style.width = '90%';
+    newAudio.style.maxWidth = '400px';
+    newAudio.setAttribute('playsinline', '');
+    newAudio.setAttribute('preload', 'auto');
+    targetSong.appendChild(newAudio);
+  }
+});
+
     document.addEventListener('touchstart', () => {
       document.querySelectorAll('audio').forEach(audio => {
         audio.controls = true;
